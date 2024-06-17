@@ -9,10 +9,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:horsethegame/my_game.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Flame.device.fullScreen();
-  Flame.device.setLandscape();
+  await Flame.device.fullScreen();
+  await Flame.device.setLandscape();
 
   MyGame game = MyGame();
   runApp(GameWidget(game: kDebugMode ? MyGame() : game));
