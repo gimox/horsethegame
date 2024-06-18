@@ -6,7 +6,11 @@
     "activeFile": "",
     "expandedProjectPaths": [
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "tiles/horseTileSet.tsx": {
+            "scaleInEditor": 1
+        },
         "tiles/level_01.tmx": {
             "scale": 1,
             "selectedLayer": 0,
@@ -26,6 +30,7 @@
     ],
     "project": "horsethegame.tiled-project",
     "recentFiles": [
+        "tiles/horseTileSet.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

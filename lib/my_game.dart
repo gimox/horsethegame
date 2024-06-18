@@ -22,18 +22,25 @@ class MyGame extends FlameGame
   late final CameraComponent cam;
   Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
-  bool showJoystick = true;
+  bool showJoystick = false;
 
   @override
   FutureOr<void> onLoad() async {
     // load all image into cache
     await images.loadAllImages();
 
-    final world = Level(player: player, levelName: "level_01");
+    final world = Level(
+      player: player,
+      levelName: "level_01",
+    );
 
     cam = CameraComponent.withFixedResolution(
-        world: world, width: 640, height: 360);
+      world: world,
+      height: 360,
+      width: 640,
+    );
     cam.viewfinder.anchor = Anchor.topLeft;
+    cam.priority = 1;
 
     addAll([cam, world]);
 
@@ -55,6 +62,7 @@ class MyGame extends FlameGame
 
   void addJoystick() {
     joystick = JoystickComponent(
+      priority: 2,
       knob: SpriteComponent(
         sprite: Sprite(
           images.fromCache('HUD/knob.png'),
@@ -76,15 +84,15 @@ class MyGame extends FlameGame
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
-        player.playerDirection = PlayerDirection.left;
+        player.horizontalMovement = -1;
         break;
       case JoystickDirection.right:
       case JoystickDirection.upRight:
       case JoystickDirection.downRight:
-        player.playerDirection = PlayerDirection.right;
+        player.horizontalMovement = 1;
         break;
       default:
-        player.playerDirection = PlayerDirection.none;
+            player.horizontalMovement = 0;
         //idle
         break;
     }
