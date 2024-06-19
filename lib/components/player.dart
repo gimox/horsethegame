@@ -90,7 +90,6 @@ class Player extends SpriteAnimationGroupComponent
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Fruit) other.collidedWithPlayer();
 
-
     super.onCollision(intersectionPoints, other);
   }
 

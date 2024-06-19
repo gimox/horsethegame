@@ -18,6 +18,7 @@ class Fruit extends SpriteAnimationComponent
           size: size,
         );
 
+  bool _collected = false;
   final double stepTime = 0.05;
   final hitbox = CustomHitbox(
     offsetX: 10,
@@ -28,16 +29,16 @@ class Fruit extends SpriteAnimationComponent
 
   @override
   FutureOr<void> onLoad() {
-    debugMode = true;
+    //  debugMode = true;
     priority = -1;
 
-    collidedWithPlayer();
-
-    add(RectangleHitbox(
-      position: Vector2(hitbox.offsetX, hitbox.offsetY),
-      size: Vector2(hitbox.width, hitbox.height),
-      collisionType: CollisionType.passive,
-    ));
+    add(
+      RectangleHitbox(
+        position: Vector2(hitbox.offsetX, hitbox.offsetY),
+        size: Vector2(hitbox.width, hitbox.height),
+        collisionType: CollisionType.passive,
+      ),
+    );
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache('Items/Fruits/$fruit.png'),
       SpriteAnimationData.sequenced(
@@ -50,10 +51,22 @@ class Fruit extends SpriteAnimationComponent
   }
 
   void collidedWithPlayer() {
-    try {
-      removeFromParent();
-    } on Exception catch(_){
-
+    if (!_collected) {
+      animation = SpriteAnimation.fromFrameData(
+        game.images.fromCache('Items/Fruits/Collected.png'),
+        SpriteAnimationData.sequenced(
+          amount: 6,
+          stepTime: stepTime,
+          textureSize: Vector2.all(32),
+          loop: false,
+        ),
+      );
+      _collected = true;
     }
+    //removeFromParent();
+    Future.delayed(
+      const Duration(milliseconds: 400),
+      () => removeFromParent(),
+    );
   }
 }
