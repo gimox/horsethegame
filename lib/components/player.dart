@@ -16,16 +16,23 @@ import 'package:horsethegame/components/saw.dart';
 import 'package:horsethegame/components/utils.dart';
 import 'package:horsethegame/my_game.dart';
 
-enum PlayerState { idle, running, jumping, falling, hit, appearing }
+import 'checkpoint.dart';
+
+enum PlayerState {
+  idle,
+  running,
+  jumping,
+  falling,
+  hit,
+  appearing,
+  disappearing
+}
 
 class Player extends SpriteAnimationGroupComponent
     with HasGameRef<MyGame>, KeyboardHandler, CollisionCallbacks {
   String character;
 
-  Player({
-    position,
-    this.character = "Ninja Frog",
-  }) : super(position: position);
+  Player({super.position, this.character = "Ninja Frog"});
 
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
@@ -33,6 +40,7 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation fallingAnimation;
   late final SpriteAnimation hitAnimation;
   late final SpriteAnimation appearingAnimation;
+  late final SpriteAnimation disappearingAnimation;
 
   final double stepTime = 0.05;
 
@@ -46,6 +54,7 @@ class Player extends SpriteAnimationGroupComponent
   bool isOnGround = false;
   bool hasJumped = false;
   bool gotHit = false;
+  bool reachedCheckpoint = false;
   List<CollisionBlock> collisionBlocks = [];
   CustomHitbox hitbox = CustomHitbox(
     offsetX: 10,
@@ -69,7 +78,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   @override
   void update(double dt) {
-    if (!gotHit) {
+    if (!gotHit && !reachedCheckpoint) {
       _updatePlayerState();
       _updatePlayerMovement(dt);
       _checkHorizontalCollisions();
@@ -98,8 +107,11 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Fruit) other.collidedWithPlayer();
-    if (other is Saw) _respawn();
+    if (!reachedCheckpoint) {
+      if (other is Fruit) other.collidedWithPlayer();
+      if (other is Saw) _respawn();
+      if (other is Checkpoint) _reachedCheckpoint();
+    }
 
     super.onCollision(intersectionPoints, other);
   }
@@ -112,6 +124,7 @@ class Player extends SpriteAnimationGroupComponent
     fallingAnimation = _spriteAnimation("Fall", 1);
     hitAnimation = _spriteAnimation("Hit", 7);
     appearingAnimation = _specialSpriteAnimation("Appearing", 7);
+    disappearingAnimation = _specialSpriteAnimation("Desappearing", 7);
 
     // list of all animations
     animations = {
@@ -121,6 +134,7 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.falling: fallingAnimation,
       PlayerState.hit: hitAnimation,
       PlayerState.appearing: appearingAnimation,
+      PlayerState.disappearing: disappearingAnimation,
     };
 
     // set current animation
@@ -255,6 +269,29 @@ class Player extends SpriteAnimationGroupComponent
         position = startingPosition;
         _updatePlayerState();
         Future.delayed(canMoveDuration, () => gotHit = false);
+      });
+    });
+  }
+
+  void _reachedCheckpoint() {
+    reachedCheckpoint = true;
+    if (scale.x > 0) {
+      position = position - Vector2.all(32);
+    } else if (scale.x < 0) {
+      position = position + Vector2(32, -32);
+    }
+
+    current = PlayerState.disappearing;
+
+    const reachedCheckpointDuration = Duration(milliseconds: 50 * 7);
+
+    Future.delayed(reachedCheckpointDuration, () {
+      reachedCheckpoint = false;
+      position = Vector2.all(-640);
+
+      const waitToChangeDuration = Duration(seconds: 3);
+      Future.delayed(waitToChangeDuration, () {
+        game.loadNextLevel();
       });
     });
   }

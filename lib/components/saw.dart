@@ -18,12 +18,9 @@ class Saw extends SpriteAnimationComponent with HasGameRef<MyGame> {
     this.isVertical = false,
     this.offNeg = 0,
     this.offPos = 0,
-    position,
-    size,
-  }) : super(
-          position: position,
-          size: size,
-        );
+    super.position,
+    super.size,
+  });
 
   static const double sawSpeed = 0.03;
   static const moveSpeed = 50;
@@ -68,18 +65,18 @@ class Saw extends SpriteAnimationComponent with HasGameRef<MyGame> {
   }
 
   void moveVertically(double dt) {
-    if(position.y >= rangePos) {
+    if (position.y >= rangePos) {
       moveDirection = -1;
-    }else if (position.y <= rangeNeg) {
+    } else if (position.y <= rangeNeg) {
       moveDirection = 1;
     }
     position.y += moveDirection * moveSpeed * dt;
   }
 
   void moveHorizontally(double dt) {
-    if(position.x >= rangePos) {
+    if (position.x >= rangePos) {
       moveDirection = -1;
-    }else if (position.x <= rangeNeg) {
+    } else if (position.x <= rangeNeg) {
       moveDirection = 1;
     }
     position.x += moveDirection * moveSpeed * dt;

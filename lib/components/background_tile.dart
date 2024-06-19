@@ -6,12 +6,7 @@ import 'package:horsethegame/my_game.dart';
 class BackgroundTile extends SpriteComponent with HasGameRef<MyGame> {
   final String color;
 
-  BackgroundTile({
-    this.color = 'Gray',
-    position,
-  }) : super(
-          position: position,
-        );
+  BackgroundTile({this.color = 'Gray', super.position});
 
   final double scrollSpeed = 0.4;
 
@@ -26,11 +21,9 @@ class BackgroundTile extends SpriteComponent with HasGameRef<MyGame> {
   @override
   void updateTree(double dt) {
     position.y += scrollSpeed;
-    double tileSize  = 64;
+    double tileSize = 64;
     int scrollHeight = (game.size.y / tileSize).floor();
-    if(position.y > scrollHeight * tileSize) position.y = -tileSize;
+    if (position.y > scrollHeight * tileSize) position.y = -tileSize;
     super.updateTree(dt);
   }
-
-
 }

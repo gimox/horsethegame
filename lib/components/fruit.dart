@@ -11,12 +11,9 @@ class Fruit extends SpriteAnimationComponent
 
   Fruit({
     this.fruit = 'Apple',
-    position,
-    size,
-  }) : super(
-          position: position,
-          size: size,
-        );
+    super.position,
+    super.size,
+  });
 
   bool _collected = false;
   final double stepTime = 0.05;
