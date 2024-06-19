@@ -7,10 +7,13 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:horsethegame/components/background_tile.dart';
 import 'package:horsethegame/components/collision_block.dart';
+import 'package:horsethegame/components/fruit.dart';
 import 'package:horsethegame/components/player.dart';
+import 'package:horsethegame/my_game.dart';
 
-class Level extends World {
+class Level extends World with HasGameRef<MyGame> {
   final String levelName;
   final Player player;
 
@@ -25,6 +28,38 @@ class Level extends World {
 
     add(level);
 
+    _scrollingBackGround();
+    _spawningObjects();
+    _addCollisions();
+
+    return super.onLoad();
+  }
+
+  void _scrollingBackGround()  {
+    final backgroundLayer = level.tileMap.getLayer('Background');
+    const tileSize = 64;
+
+    final numTilesY = (game.size.y / tileSize).floor();
+    final numTilesX = (game.size.x / tileSize).floor();
+
+    if (backgroundLayer != null) {
+      final backgroundColor =
+          backgroundLayer.properties.getValue('BackgroundColor');
+
+      for (double y = 0; y < game.size.y / numTilesY; y++) {
+        for (double x = 0; x < numTilesX; x++) {
+          final backgroundTile = BackgroundTile(
+            color: backgroundColor ?? 'Gray',
+            position: Vector2(x * tileSize, y * tileSize - tileSize),
+          );
+
+          add(backgroundTile);
+        }
+      }
+    }
+  }
+
+  void _spawningObjects() {
     final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>("Spawnpoints");
 
     if (spawnPointsLayer != null) {
@@ -33,13 +68,23 @@ class Level extends World {
           case "Player":
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
-
             break;
+
+          case 'Fruit':
+            final fruit = Fruit(
+              fruit: spawnPoint.name,
+              position: Vector2(spawnPoint.x, spawnPoint.y),
+              size: Vector2(spawnPoint.width, spawnPoint.height),
+            );
+            add(fruit);
+
           default:
         }
       }
     }
+  }
 
+  void _addCollisions() {
     final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
     if (collisionLayer != null) {
       for (final collision in collisionLayer.objects) {
@@ -64,6 +109,5 @@ class Level extends World {
     }
 
     player.collisionBlocks = collisionBlocks;
-    return super.onLoad();
   }
 }

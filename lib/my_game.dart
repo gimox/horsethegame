@@ -10,13 +10,11 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/rendering.dart';
-
 import 'package:horsethegame/components/level.dart';
-
 import 'components/player.dart';
 
 class MyGame extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks {
+    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
   @override
   Color backgroundColor() => const Color(0xFF211F30);
   late final CameraComponent cam;
@@ -92,7 +90,7 @@ class MyGame extends FlameGame
         player.horizontalMovement = 1;
         break;
       default:
-            player.horizontalMovement = 0;
+        player.horizontalMovement = 0;
         //idle
         break;
     }

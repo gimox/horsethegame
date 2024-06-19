@@ -9,14 +9,15 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:horsethegame/components/collision_block.dart';
-import 'package:horsethegame/components/player_hitbox.dart';
+import 'package:horsethegame/components/custom_hitbox.dart';
+import 'package:horsethegame/components/fruit.dart';
 import 'package:horsethegame/components/utils.dart';
 import 'package:horsethegame/my_game.dart';
 
 enum PlayerState { idle, running, jumping, falling }
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<MyGame>, KeyboardHandler {
+    with HasGameRef<MyGame>, KeyboardHandler, CollisionCallbacks {
   String character;
 
   Player({
@@ -40,7 +41,7 @@ class Player extends SpriteAnimationGroupComponent
   bool isOnGround = false;
   bool hasJumped = false;
   List<CollisionBlock> collisionBlocks = [];
-  PlayerHitbox hitbox = PlayerHitbox(
+  CustomHitbox hitbox = CustomHitbox(
     offsetX: 10,
     offsetY: 4,
     width: 14,
@@ -50,7 +51,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
-   // debugMode = true;
+    // debugMode = true;
     add(RectangleHitbox(
       position: Vector2(hitbox.offsetX, hitbox.offsetY),
       size: Vector2(hitbox.width, hitbox.height),
@@ -83,6 +84,14 @@ class Player extends SpriteAnimationGroupComponent
     hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
 
     return super.onKeyEvent(event, keysPressed);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Fruit) other.collidedWithPlayer();
+
+
+    super.onCollision(intersectionPoints, other);
   }
 
   void _loadAllAnimations() {
