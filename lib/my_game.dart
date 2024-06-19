@@ -4,35 +4,44 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/rendering.dart';
+import 'package:horsethegame/components/jump_button.dart';
 import 'package:horsethegame/components/level.dart';
 import 'components/player.dart';
 
 class MyGame extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
+    with
+        HasKeyboardHandlerComponents,
+        DragCallbacks,
+        HasCollisionDetection,
+        TapCallbacks {
   @override
   Color backgroundColor() => const Color(0xFF211F30);
   late CameraComponent cam;
   Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
-  bool showJoystick = false;
+  bool showControls = false;
   List<String> levelNames = ['level_01', 'level_01'];
   int currentLevelIndex = 0;
 
   @override
   FutureOr<void> onLoad() async {
+    _canShowControls();
+
     // load all image into cache
     await images.loadAllImages();
 
     _loadLevel();
 
-    if (showJoystick) {
+    if (showControls) {
       addJoystick();
+      add(JumpButton());
     }
 
     return super.onLoad();
@@ -40,7 +49,7 @@ class MyGame extends FlameGame
 
   @override
   void update(double dt) {
-    if (showJoystick) {
+    if (showControls) {
       updateJoystick();
     }
 
@@ -49,7 +58,7 @@ class MyGame extends FlameGame
 
   void addJoystick() {
     joystick = JoystickComponent(
-      priority: 2,
+      priority: 10,
       knob: SpriteComponent(
         sprite: Sprite(
           images.fromCache('HUD/knob.png'),
@@ -89,13 +98,13 @@ class MyGame extends FlameGame
     if (currentLevelIndex < levelNames.length - 1) {
       currentLevelIndex++;
       _loadLevel();
-    }else {
+    } else {
       // FINISH THE GAME????
     }
   }
 
   void _loadLevel() {
-    Future.delayed(const Duration(seconds: 1), (){
+    Future.delayed(const Duration(seconds: 1), () {
       Level world = Level(
         player: player,
         levelName: levelNames[currentLevelIndex],
@@ -111,7 +120,11 @@ class MyGame extends FlameGame
 
       addAll([cam, world]);
     });
+  }
 
-
+  void _canShowControls() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      showControls = true;
+    }
   }
 }

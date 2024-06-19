@@ -62,12 +62,15 @@ class Player extends SpriteAnimationGroupComponent
     width: 14,
     height: 28,
   );
+  double fixedDeltaTime = 1 / 60;
+  double accumulatedTime = 0;
 
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
     // debugMode = true;
     startingPosition = Vector2(position.x, position.y);
+
     add(RectangleHitbox(
       position: Vector2(hitbox.offsetX, hitbox.offsetY),
       size: Vector2(hitbox.width, hitbox.height),
@@ -76,14 +79,18 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   @override
-  @override
   void update(double dt) {
-    if (!gotHit && !reachedCheckpoint) {
-      _updatePlayerState();
-      _updatePlayerMovement(dt);
-      _checkHorizontalCollisions();
-      _applyGravity(dt);
-      _checkVerticalCollision();
+    accumulatedTime += dt;
+
+    while (accumulatedTime >= fixedDeltaTime) {
+      if (!gotHit && !reachedCheckpoint) {
+        _updatePlayerState();
+        _updatePlayerMovement(fixedDeltaTime);
+        _checkHorizontalCollisions();
+        _applyGravity(fixedDeltaTime);
+        _checkVerticalCollision();
+      }
+      accumulatedTime -= fixedDeltaTime;
     }
 
     super.update(dt);
@@ -106,14 +113,14 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
     if (!reachedCheckpoint) {
       if (other is Fruit) other.collidedWithPlayer();
       if (other is Saw) _respawn();
       if (other is Checkpoint) _reachedCheckpoint();
     }
-
-    super.onCollision(intersectionPoints, other);
+    super.onCollisionStart(intersectionPoints, other);
   }
 
   void _loadAllAnimations() {
@@ -122,7 +129,7 @@ class Player extends SpriteAnimationGroupComponent
     runningAnimation = _spriteAnimation("Run", 12);
     jumpingAnimation = _spriteAnimation("Jump", 1);
     fallingAnimation = _spriteAnimation("Fall", 1);
-    hitAnimation = _spriteAnimation("Hit", 7);
+    hitAnimation = _spriteAnimation("Hit", 7)..loop = false;
     appearingAnimation = _specialSpriteAnimation("Appearing", 7);
     disappearingAnimation = _specialSpriteAnimation("Desappearing", 7);
 
@@ -159,6 +166,7 @@ class Player extends SpriteAnimationGroupComponent
         amount: amount,
         stepTime: stepTime,
         textureSize: Vector2.all(96),
+        loop: false,
       ),
     );
   }
@@ -253,24 +261,25 @@ class Player extends SpriteAnimationGroupComponent
     }
   }
 
-  void _respawn() {
-    const hitDuration = Duration(milliseconds: 350);
-    const appearingDuration = Duration(milliseconds: 350);
+  void _respawn() async {
     const canMoveDuration = Duration(milliseconds: 400);
     gotHit = true;
     current = PlayerState.hit;
 
-    Future.delayed(hitDuration, () {
-      scale.x = 1;
-      position = startingPosition - Vector2.all(96 - 64);
-      current = PlayerState.appearing;
-      Future.delayed(appearingDuration, () {
-        velocity = Vector2.zero();
-        position = startingPosition;
-        _updatePlayerState();
-        Future.delayed(canMoveDuration, () => gotHit = false);
-      });
-    });
+    await animationTicker?.completed;
+    animationTicker?.reset();
+
+    scale.x = 1;
+    position = startingPosition - Vector2.all(96 - 64);
+    current = PlayerState.appearing;
+
+    await animationTicker?.completed;
+    animationTicker?.reset();
+
+    velocity = Vector2.zero();
+    position = startingPosition;
+    _updatePlayerState();
+    Future.delayed(canMoveDuration, () => gotHit = false);
   }
 
   void _reachedCheckpoint() {
