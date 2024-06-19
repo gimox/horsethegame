@@ -11,6 +11,7 @@ import 'package:horsethegame/components/background_tile.dart';
 import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/fruit.dart';
 import 'package:horsethegame/components/player.dart';
+import 'package:horsethegame/components/saw.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Level extends World with HasGameRef<MyGame> {
@@ -35,7 +36,7 @@ class Level extends World with HasGameRef<MyGame> {
     return super.onLoad();
   }
 
-  void _scrollingBackGround()  {
+  void _scrollingBackGround() {
     final backgroundLayer = level.tileMap.getLayer('Background');
     const tileSize = 64;
 
@@ -77,6 +78,22 @@ class Level extends World with HasGameRef<MyGame> {
               size: Vector2(spawnPoint.width, spawnPoint.height),
             );
             add(fruit);
+            break;
+
+          case 'Saw':
+            final isVertical = spawnPoint.properties.getValue('isVertical');
+            final offNeg = spawnPoint.properties.getValue('offNeg');
+            final offPos = spawnPoint.properties.getValue('offPos');
+
+            final saw = Saw(
+              isVertical: isVertical,
+              offNeg: offNeg,
+              offPos: offPos,
+              position: Vector2(spawnPoint.x, spawnPoint.y),
+              size: Vector2(spawnPoint.width, spawnPoint.height),
+            );
+            add(saw);
+            break;
 
           default:
         }

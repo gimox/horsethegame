@@ -29,6 +29,7 @@
     "openFiles": [
     ],
     "project": "horsethegame.tiled-project",
+    "property.type": "float",
     "recentFiles": [
         "tiles/horseTileSet.tsx"
     ],
