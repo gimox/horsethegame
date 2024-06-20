@@ -27,7 +27,7 @@ class Checkpoint extends SpriteAnimationComponent
           .fromCache('Items/Checkpoints/Checkpoint/Checkpoint (No Flag).png'),
       SpriteAnimationData.sequenced(
         amount: 1,
-        stepTime: 0.5,
+        stepTime: 1,
         textureSize: Vector2.all(64),
       ),
     );
@@ -55,6 +55,8 @@ class Checkpoint extends SpriteAnimationComponent
     );
 
     await animationTicker?.completed;
+    animationTicker?.reset();
+
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache(
           'Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle)(64x64).png'),
@@ -62,7 +64,6 @@ class Checkpoint extends SpriteAnimationComponent
         amount: 10,
         stepTime: 0.05,
         textureSize: Vector2.all(64),
-        loop: true,
       ),
     );
   }

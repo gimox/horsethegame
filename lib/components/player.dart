@@ -7,6 +7,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:horsethegame/components/collision_block.dart';
@@ -68,7 +69,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
-    // debugMode = true;
+     // debugMode = true;
     startingPosition = Vector2(position.x, position.y);
 
     add(RectangleHitbox(
@@ -99,6 +100,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
+
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
         keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
@@ -111,6 +113,7 @@ class Player extends SpriteAnimationGroupComponent
 
     return super.onKeyEvent(event, keysPressed);
   }
+
 
   @override
   void onCollisionStart(
@@ -201,6 +204,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _playerJump(double dt) {
+    if (game.playSounds) FlameAudio.play('jump.wav', volume: game.soundVolume);
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;
     isOnGround = false;
@@ -262,6 +266,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _respawn() async {
+    if (game.playSounds) FlameAudio.play('hit.wav', volume: game.soundVolume);
     const canMoveDuration = Duration(milliseconds: 400);
     gotHit = true;
     current = PlayerState.hit;
@@ -282,8 +287,13 @@ class Player extends SpriteAnimationGroupComponent
     Future.delayed(canMoveDuration, () => gotHit = false);
   }
 
-  void _reachedCheckpoint() {
+  void _reachedCheckpoint() async {
     reachedCheckpoint = true;
+
+    if (game.playSounds) {
+      FlameAudio.play('disappear.wav', volume: game.soundVolume);
+    }
+
     if (scale.x > 0) {
       position = position - Vector2.all(32);
     } else if (scale.x < 0) {
@@ -292,16 +302,13 @@ class Player extends SpriteAnimationGroupComponent
 
     current = PlayerState.disappearing;
 
-    const reachedCheckpointDuration = Duration(milliseconds: 50 * 7);
+    await animationTicker?.completed;
+    animationTicker?.reset();
 
-    Future.delayed(reachedCheckpointDuration, () {
-      reachedCheckpoint = false;
-      position = Vector2.all(-640);
+    reachedCheckpoint = false;
+    position = Vector2.all(-640);
 
-      const waitToChangeDuration = Duration(seconds: 3);
-      Future.delayed(waitToChangeDuration, () {
-        game.loadNextLevel();
-      });
-    });
+    const waitToChangeDuration = Duration(seconds: 3);
+    Future.delayed(waitToChangeDuration, () => game.loadNextLevel());
   }
 }
