@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
+import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
 import 'package:horsethegame/my_game.dart';
 
@@ -52,9 +52,8 @@ class Fruit extends SpriteAnimationComponent
   void collidedWithPlayer() async {
     if (!collected) {
       collected = true;
-      if (game.playSounds) {
-        FlameAudio.play('pickup.wav', volume: game.soundVolume);
-      }
+      game.sound.play(GameSound.pickup);
+
       animation = SpriteAnimation.fromFrameData(
         game.images.fromCache('Items/Fruits/Collected.png'),
         SpriteAnimationData.sequenced(

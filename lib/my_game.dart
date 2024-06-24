@@ -5,14 +5,16 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/rendering.dart';
+import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/jump_button.dart';
 import 'package:horsethegame/components/level.dart';
+import 'components/hud.dart';
 import 'components/player.dart';
 
 class MyGame extends FlameGame
@@ -28,16 +30,28 @@ class MyGame extends FlameGame
   late JoystickComponent joystick;
   bool showControls = false;
   bool playSounds = true;
+
   double soundVolume = 1.0;
   List<String> levelNames = ['level_01', 'level_01'];
   int currentLevelIndex = 0;
+  final fixedResolution = Vector2(640, 360);
+  late AudioManager sound;
+
+  final hud = Hud(priority: 1);
 
   @override
   FutureOr<void> onLoad() async {
     _canShowControls();
 
+    sound = AudioManager();
+    await sound.init();
+    add(sound);
+
     // load all image into cache
     await images.loadAllImages();
+
+    // fix resize
+    camera.viewport = FixedResolutionViewport(resolution: fixedResolution);
 
     _loadLevel();
 
@@ -108,7 +122,7 @@ class MyGame extends FlameGame
   }
 
   void _loadLevel() {
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 500), () async {
       Level world = Level(
         player: player,
         levelName: levelNames[currentLevelIndex],
@@ -116,13 +130,15 @@ class MyGame extends FlameGame
 
       cam = CameraComponent.withFixedResolution(
         world: world,
-        height: 360,
-        width: 640,
+        width: fixedResolution.x,
+        height: fixedResolution.y,
+        hudComponents: [hud],
       );
+
       cam.viewfinder.anchor = Anchor.topLeft;
       cam.priority = 1;
 
-      addAll([cam, world]);
+      await addAll([cam, world]);
     });
   }
 

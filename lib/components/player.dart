@@ -7,9 +7,8 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
 import 'package:horsethegame/components/fruit.dart';
@@ -44,7 +43,6 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation disappearingAnimation;
 
   final double stepTime = 0.05;
-
   final double _gravity = 9.8;
   final double _jumpForce = 260;
   final double _terminalVelocity = 300;
@@ -69,7 +67,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
-     // debugMode = true;
+    // debugMode = true;
     startingPosition = Vector2(position.x, position.y);
 
     add(RectangleHitbox(
@@ -113,7 +111,6 @@ class Player extends SpriteAnimationGroupComponent
 
     return super.onKeyEvent(event, keysPressed);
   }
-
 
   @override
   void onCollisionStart(
@@ -204,7 +201,9 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _playerJump(double dt) {
-    if (game.playSounds) FlameAudio.play('jump.wav', volume: game.soundVolume);
+    game.sound.play(GameSound.jump);
+
+    //  if (game.playSounds) FlameAudio.play('jump', volume: game.soundVolume);
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;
     isOnGround = false;
@@ -266,7 +265,8 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _respawn() async {
-    if (game.playSounds) FlameAudio.play('hit.wav', volume: game.soundVolume);
+    game.sound.play(GameSound.hit);
+
     const canMoveDuration = Duration(milliseconds: 400);
     gotHit = true;
     current = PlayerState.hit;
@@ -290,9 +290,7 @@ class Player extends SpriteAnimationGroupComponent
   void _reachedCheckpoint() async {
     reachedCheckpoint = true;
 
-    if (game.playSounds) {
-      FlameAudio.play('disappear.wav', volume: game.soundVolume);
-    }
+    game.sound.play(GameSound.disappear);
 
     if (scale.x > 0) {
       position = position - Vector2.all(32);

@@ -38,6 +38,7 @@ dependencies:
   flame: ^1.18.0
   flame_tiled: ^1.20.2
   flame_audio: ^2.10.2
+  window_manager: ^0.3.9
 
 dev_dependencies:
   flutter_test:
