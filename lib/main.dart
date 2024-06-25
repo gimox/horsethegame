@@ -41,7 +41,7 @@ void main() async {
       title: "HORSE THE GAME",
       backgroundColor: Colors.transparent,
       skipTaskbar: true,
-      titleBarStyle: TitleBarStyle.hidden,
+      titleBarStyle: TitleBarStyle.normal,
       windowButtonVisibility: true,
       minimumSize: Size(320, 180),
     );
@@ -51,8 +51,6 @@ void main() async {
       await windowManager.focus();
       await windowManager.setAspectRatio(1.78); // aspect ratio for 640x360
     });
-
-
   }
 
   runApp(const MyApp());

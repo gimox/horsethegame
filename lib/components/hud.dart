@@ -1,6 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:horsethegame/my_game.dart';
 
+import 'package:flame/game.dart';
+
+
 class Hud extends Component with HasGameRef<MyGame> {
   late final TextComponent scoreTextComponent;
   late final TextComponent healthTextComponent;
@@ -12,20 +15,21 @@ class Hud extends Component with HasGameRef<MyGame> {
   Future<void> onLoad() async {
     scoreTextComponent = TextComponent(
       text: 'Score: 0',
-      position: Vector2.all(20),
+      position: Vector2.all(10),
     );
     await add(scoreTextComponent);
 
     healthTextComponent = TextComponent(
       text: 'x5',
       anchor: Anchor.topRight,
-      position: Vector2(game.fixedResolution.x - 10, 20),
+      position: Vector2(game.fixedResolution.x - 10, 10),
     );
     await add(healthTextComponent);
+/*
+    var spriteSheet = await images.load('Spritesheet.png');
 
-    /*
     final playerSprite = SpriteComponent.fromImage(
-      game.spriteSheet,
+      image: spriteSheet,
       srcPosition: Vector2.zero(),
       srcSize: Vector2.all(32),
       anchor: Anchor.topRight,
@@ -35,8 +39,8 @@ class Hud extends Component with HasGameRef<MyGame> {
       ),
     );
     await add(playerSprite);
+*/
 
-     */
 
     /*
     game.playerData.score.addListener(onScoreChange);
