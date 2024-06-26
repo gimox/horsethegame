@@ -31,7 +31,7 @@ class MyGame extends FlameGame
 
   Player player = Player(character: 'Mask Dude');
 
-  bool showControls = true;
+  bool showControls = false;
   final Joystick joystick = Joystick();
 
   bool playSounds = false;
@@ -44,6 +44,9 @@ class MyGame extends FlameGame
 
   final Hud hud = Hud(priority: 1);
   List<Component> hudComponents = [];
+
+  int lives = 3;
+  late ComponentsNotifier<Player> playerNotifier;
 
   @override
   FutureOr<void> onLoad() async {
@@ -135,4 +138,5 @@ class MyGame extends FlameGame
       joystick.updateJoystick();
     }
   }
+
 }

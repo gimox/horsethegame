@@ -63,6 +63,7 @@ class Player extends SpriteAnimationGroupComponent
   );
   double fixedDeltaTime = 1 / 60;
   double accumulatedTime = 0;
+  double health = 1;
 
   @override
   FutureOr<void> onLoad() {

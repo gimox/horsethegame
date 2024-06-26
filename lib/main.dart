@@ -9,8 +9,11 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:horsethegame/my_game.dart';
 import 'package:horsethegame/overlays/main_menu.dart';
+import 'package:horsethegame/app/app_theme.dart';
 import 'package:window_manager/window_manager.dart';
 
 /*
@@ -31,6 +34,16 @@ void main() async {
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
   await windowManager.ensureInitialized();
+
+  // add Fonts licence
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('google_fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+  });
+
+  // disable fonts fetching. Check locale assets
+  GoogleFonts.config.allowRuntimeFetching = false;
+
 
   // for desktop only, add more platform...
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -68,7 +81,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Horse The Game',
-      theme: ThemeData.light(),
+      theme: buildTheme(Brightness.dark),
       home: Scaffold(
         body: GameWidget<MyGame>(
           game: kDebugMode ? MyGame() : game,
