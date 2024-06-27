@@ -93,7 +93,6 @@ class Level extends World with HasGameRef<MyGame> {
               size: Vector2(spawnPoint.width, spawnPoint.height),
             );
             add(checkpoint);
-
             break;
 
           default:

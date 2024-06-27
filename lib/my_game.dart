@@ -12,8 +12,8 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/rendering.dart';
 import 'package:horsethegame/components/audio_manager.dart';
-import 'package:horsethegame/components/joystick/jump_button.dart';
 import 'package:horsethegame/components/level.dart';
+import 'package:horsethegame/components/world_level.dart';
 import 'components/hud.dart';
 import 'components/joystick/joystick.dart';
 import 'components/player.dart';
@@ -26,38 +26,49 @@ class MyGame extends FlameGame
         TapCallbacks {
   @override
   Color backgroundColor() => const Color(0xFF211F30);
-  late CameraComponent cam;
-  late AudioManager sound;
 
   Player player = Player(character: 'Mask Dude');
 
+  // joystick
   bool showControls = false;
-  final Joystick joystick = Joystick();
+  late final Joystick joystickCtrl;
 
+  // sound
+  late AudioManager sound;
   bool playSounds = false;
   double soundVolume = 1.0;
 
+  // level
   List<String> levelNames = ['level_01', 'level_01'];
   int currentLevelIndex = 0;
 
+  // resolution & camera
   final fixedResolution = Vector2(640, 360);
+  late CameraComponent cam;
 
-  final Hud hud = Hud(priority: 1);
+  // hud
+  late final Hud hud;
   List<Component> hudComponents = [];
 
-  int lives = 3;
-  late ComponentsNotifier<Player> playerNotifier;
+  // level loading
+  late final WorldLevel worldLevel;
+
+  // score & lives
+  int lives = 0;
+  int startLives = 3;
+  int score = 0;
+  late TextComponent livesText = TextComponent();
+  late TextComponent scoreText = TextComponent();
 
   @override
   FutureOr<void> onLoad() async {
-    _canShowControls();
-
     // set hud default
+    hud = Hud(priority: 1);
     hudComponents = [hud];
 
     // init audio
     sound = AudioManager();
-    await sound.init();
+    await sound.init(); // cache all audio files
     add(sound);
 
     // load all image into cache
@@ -66,77 +77,24 @@ class MyGame extends FlameGame
     // fix resize
     camera.viewport = FixedResolutionViewport(resolution: fixedResolution);
 
-    _initJoystick();
+    // display joystick if needed, add joystick image to hud
+    add(Joystick());
 
-    await _loadLevel();
+    // manage level loading
+    worldLevel = WorldLevel();
+    add(worldLevel);
+
+    // load game level
+    await worldLevel.loadLevel();
 
     return super.onLoad();
   }
 
-  @override
-  void update(double dt) {
-    _updateJoystick();
-
-    super.update(dt);
-  }
-
-  void loadNextLevel() async {
-    removeWhere((component) => component is Level);
-
-    if (currentLevelIndex < levelNames.length - 1) {
-      currentLevelIndex++;
-      await _loadLevel();
+  void removeLives() {
+    if (lives > 0) {
+      lives -= 1;
     } else {
-      currentLevelIndex = 0;
-      await _loadLevel();
+      lives = 0;
     }
   }
-
-  FutureOr<void> _loadLevel() async {
-    await Future.delayed(const Duration(seconds: 1), () async {
-      Level world = Level(
-        player: player,
-        levelName: levelNames[currentLevelIndex],
-      );
-
-      cam = CameraComponent.withFixedResolution(
-        world: world,
-        width: fixedResolution.x,
-        height: fixedResolution.y,
-        hudComponents: hudComponents,
-      );
-
-      cam.viewfinder.anchor = Anchor.topLeft;
-      cam.priority = 1;
-
-      await addAll([cam, world]);
-    });
-  }
-
-  void _canShowControls() {
-    if (Platform.isAndroid || Platform.isIOS) {
-      showControls = true;
-    }
-  }
-
-  void _initJoystick() {
-    if (showControls) {
-      final Sprite knob = Sprite(images.fromCache('HUD/knob.png'));
-      final Sprite joystickHud = Sprite(images.fromCache('HUD/joystick.png'));
-      add(joystick);
-
-      hudComponents = [
-        hud,
-        joystick.getJoystick(knob, joystickHud),
-        JumpButton()
-      ];
-    }
-  }
-
-  void _updateJoystick() {
-    if (showControls) {
-      joystick.updateJoystick();
-    }
-  }
-
 }

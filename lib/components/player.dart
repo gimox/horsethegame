@@ -15,6 +15,7 @@ import 'package:horsethegame/components/fruit.dart';
 import 'package:horsethegame/components/saw.dart';
 import 'package:horsethegame/components/utils.dart';
 import 'package:horsethegame/my_game.dart';
+import 'package:horsethegame/components/world_level.dart';
 
 import 'checkpoint.dart';
 
@@ -266,6 +267,8 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _respawn() async {
+    game.removeLives();
+
     game.sound.play(GameSound.hit);
 
     const canMoveDuration = Duration(milliseconds: 400);
@@ -308,6 +311,6 @@ class Player extends SpriteAnimationGroupComponent
     position = Vector2.all(-640);
 
     const waitToChangeDuration = Duration(seconds: 3);
-    Future.delayed(waitToChangeDuration, () => game.loadNextLevel());
+    Future.delayed(waitToChangeDuration, () => game.worldLevel.loadNextLevel());
   }
 }

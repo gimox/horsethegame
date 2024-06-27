@@ -1,29 +1,65 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/rendering.dart';
 import 'package:horsethegame/my_game.dart';
+import 'package:flame/game.dart';
+
+import 'jump_button.dart';
 
 class Joystick extends Component with HasGameRef<MyGame>, TapCallbacks {
-  Joystick();
+  String knobImg;
+  String joystickImg;
 
-  bool showControls = false;
-  final marginButton = 32;
-  final buttonSize = 64;
+  Joystick({
+    this.knobImg = 'HUD/knob.png',
+    this.joystickImg = 'HUD/joystick.png',
+  });
+
+  final int marginButton = 32;
+  final int buttonSize = 64;
+
+  final int joystickPriority = 10;
   late JoystickComponent joystick;
 
-  JoystickComponent getJoystick(Sprite knob, Sprite joystickHud) {
+  @override
+  void update(double dt) {
+    if (game.showControls) {
+      _updateJoystick();
+    }
+
+    super.update(dt);
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    _canShowControls();
+    initJoystick();
+
+    return super.onLoad();
+  }
+
+  void initJoystick() {
+    if (game.showControls) {
+      game.hudComponents = [game.hud, _getJoystick(), JumpButton()];
+    }
+  }
+
+  JoystickComponent _getJoystick() {
     joystick = JoystickComponent(
-      priority: 10,
-      knob: SpriteComponent(sprite: knob),
+      priority: joystickPriority,
+      knob: SpriteComponent(sprite: Sprite(game.images.fromCache(knobImg))),
       background: SpriteComponent(
-        sprite: joystickHud,
+        sprite: Sprite(game.images.fromCache(joystickImg)),
       ),
       margin: const EdgeInsets.only(left: 32, bottom: 32),
     );
     return joystick;
   }
 
-  void updateJoystick() {
+  void _updateJoystick() {
     switch (joystick.direction) {
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
@@ -39,6 +75,12 @@ class Joystick extends Component with HasGameRef<MyGame>, TapCallbacks {
         game.player.horizontalMovement = 0;
         //idle
         break;
+    }
+  }
+
+  void _canShowControls() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      game.showControls = true;
     }
   }
 }

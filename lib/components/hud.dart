@@ -2,30 +2,33 @@ import 'package:flame/components.dart';
 import 'package:horsethegame/app/app_theme.dart';
 import 'package:horsethegame/my_game.dart';
 
-//import 'package:flame/game.dart';
-
 class Hud extends PositionComponent with HasGameRef<MyGame> {
-  late final TextComponent scoreTextComponent;
-  late final TextComponent healthTextComponent;
-
   Hud({super.children, super.priority});
 
   @override
+  void update(double dt) {
+    game.livesText.text = 'Lives: ${game.lives}';
+    game.scoreText.text = 'Score: ${game.score}';
+
+    super.update(dt);
+  }
+
+  @override
   Future<void> onLoad() async {
-    scoreTextComponent = TextComponent(
-      text: 'Score: 0',
+    game.scoreText = TextComponent(
+      text: 'Score: ${game.score}',
       position: Vector2.all(10),
       textRenderer: regular,
     );
-    await add(scoreTextComponent);
+    await add(game.scoreText);
 
-    healthTextComponent = TextComponent(
-      text: 'x5',
+    game.livesText = TextComponent(
+      text: 'Lives: ${game.lives}',
       anchor: Anchor.topRight,
       position: Vector2(game.fixedResolution.x - 10, 10),
       textRenderer: regular,
     );
-    await add(healthTextComponent);
+    await add(game.livesText);
 /*
     var spriteSheet = await images.load('Spritesheet.png');
 
@@ -42,11 +45,7 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     await add(playerSprite);
 */
 
-    /*
-    game.playerData.score.addListener(onScoreChange);
-    game.playerData.health.addListener(onHealthChange);
 
-     */
 
     /*
     final pauseButton = SpriteButtonComponent(
