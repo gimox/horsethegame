@@ -1,12 +1,16 @@
+/*
+ * Copyright (c) 2024.
+ * Giorgio Modoni <modogio@gmail.com>
+ */
+
 import 'package:flutter/material.dart';
 import 'package:horsethegame/my_game.dart';
-import 'package:horsethegame/overlays/settings_menu.dart';
 
-class MainMenu extends StatelessWidget {
-  static const id = 'MainMenu';
+class GameoverMenu extends StatelessWidget {
+  static const id = 'GameoverMenu';
   final MyGame game;
 
-  const MainMenu({required this.game, super.key});
+  const GameoverMenu({required this.game, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +21,13 @@ class MainMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-
               width: 120,
               child: ElevatedButton(
                 onPressed: () {
-
-                //  game.currentLevelIndex = 0;
-                 // game.worldLevel.loadNextLevel();
                   game.overlays.remove(id);
-                 // game.add(MyGame());
+                  // game.add(GamePlay());
                 },
-                child: const Text('Play'),
+                child: const Text('----'),
               ),
             ),
             const SizedBox(height: 10),
@@ -36,9 +36,9 @@ class MainMenu extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   game.overlays.remove(id);
-                //  game.overlays.add(SettingsMenu.id);
+                  //  game.overlays.add(Settings.id);
                 },
-                child: const Text('Settings'),
+                child: const Text('-------'),
               ),
             ),
           ],

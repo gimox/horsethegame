@@ -12,22 +12,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:horsethegame/my_game.dart';
+import 'package:horsethegame/overlays/gameover_menu.dart';
 import 'package:horsethegame/overlays/main_menu.dart';
 import 'package:horsethegame/app/app_theme.dart';
+import 'package:horsethegame/overlays/pause_menu.dart';
+import 'package:horsethegame/overlays/settings_menu.dart';
 import 'package:window_manager/window_manager.dart';
 
-/*
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Flame.device.fullScreen();
-  await Flame.device.setLandscape();
 
-  MyGame game = MyGame();
-  runApp(GameWidget(
-    game: kDebugMode ? MyGame() : game,
-  ));
-}
-*/
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +36,6 @@ void main() async {
 
   // disable fonts fetching. Check locale assets
   GoogleFonts.config.allowRuntimeFetching = false;
-
 
   // for desktop only, add more platform...
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -66,8 +58,11 @@ void main() async {
     });
   }
 
+  //MyGame game = MyGame();
+ // runApp(GameWidget<MyGame>(game: kDebugMode ? MyGame() : game));
   runApp(const MyApp());
 }
+
 
 // A single instance to avoid creation of
 // multiple instances in every build.
@@ -87,10 +82,16 @@ class MyApp extends StatelessWidget {
           game: kDebugMode ? MyGame() : game,
           overlayBuilderMap: {
             MainMenu.id: (context, game) => MainMenu(game: game),
+          //  SettingsMenu.id: (context, game) => SettingsMenu(game: game),
+          //  GameoverMenu.id: (context, game) => GameoverMenu(game: game),
+            PauseMenu.id: (context, game) => PauseMenu(game: game),
           },
-          initialActiveOverlays: const [MainMenu.id],
+        //  initialActiveOverlays: const [MainMenu.id],
         ),
       ),
     );
   }
 }
+
+
+

@@ -4,16 +4,19 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:horsethegame/components/audio_manager.dart';
-import 'package:horsethegame/components/level.dart';
+import 'package:horsethegame/components/player_data.dart';
 import 'package:horsethegame/components/world_level.dart';
+import 'package:horsethegame/screens/pause_screen.dart';
+import 'package:horsethegame/screens/play_screen.dart';
+import 'package:horsethegame/screens/splash_screen.dart';
 import 'components/hud.dart';
 import 'components/joystick/joystick.dart';
 import 'components/player.dart';
@@ -54,14 +57,15 @@ class MyGame extends FlameGame
   late final WorldLevel worldLevel;
 
   // score & lives
-  int lives = 0;
-  int startLives = 3;
-  int score = 0;
-  late TextComponent livesText = TextComponent();
-  late TextComponent scoreText = TextComponent();
+
+  final PlayerData playerData = PlayerData(3, 0, 0);
+
+  late final RouterComponent router;
 
   @override
   FutureOr<void> onLoad() async {
+    playerData.initNotifier();
+
     // set hud default
     hud = Hud(priority: 1);
     hudComponents = [hud];
@@ -84,17 +88,30 @@ class MyGame extends FlameGame
     worldLevel = WorldLevel();
     add(worldLevel);
 
+    if (kDebugMode) {
+      print("game onload");
+    }
     // load game level
-    await worldLevel.loadLevel();
+
+
+    add(
+      router = RouterComponent(
+        routes: {
+          'splash': Route(SplashScreen.new),
+          'play': Route(PlayScreen.new),
+          'pause':PauseRoute(),
+        },
+        initialRoute: 'splash',
+      ),
+    );
 
     return super.onLoad();
   }
 
-  void removeLives() {
-    if (lives > 0) {
-      lives -= 1;
-    } else {
-      lives = 0;
-    }
+  @override
+  void onRemove() {
+    //   hud?.removeFromParent();
+
+    super.onRemove();
   }
 }

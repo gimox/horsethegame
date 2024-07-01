@@ -15,7 +15,6 @@ import 'package:horsethegame/components/fruit.dart';
 import 'package:horsethegame/components/saw.dart';
 import 'package:horsethegame/components/utils.dart';
 import 'package:horsethegame/my_game.dart';
-import 'package:horsethegame/components/world_level.dart';
 
 import 'checkpoint.dart';
 
@@ -267,7 +266,8 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _respawn() async {
-    game.removeLives();
+    // remove health
+    game.playerData.removeHealth();
 
     game.sound.play(GameSound.hit);
 

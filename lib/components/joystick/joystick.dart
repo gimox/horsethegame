@@ -5,7 +5,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/rendering.dart';
 import 'package:horsethegame/my_game.dart';
-import 'package:flame/game.dart';
 
 import 'jump_button.dart';
 
