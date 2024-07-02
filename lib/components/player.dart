@@ -10,6 +10,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:horsethegame/components/audio_manager.dart';
+import 'package:horsethegame/components/checkpoint.dart';
 import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
 import 'package:horsethegame/components/fruit.dart';
@@ -17,8 +18,6 @@ import 'package:horsethegame/components/game_vars.dart';
 import 'package:horsethegame/components/saw.dart';
 import 'package:horsethegame/components/utils/utils.dart';
 import 'package:horsethegame/my_game.dart';
-
-import 'checkpoint.dart';
 
 enum PlayerState {
   idle,
@@ -43,8 +42,6 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation hitAnimation;
   late final SpriteAnimation appearingAnimation;
   late final SpriteAnimation disappearingAnimation;
-
-  late final Image spriteImage;
 
   final double stepTime = 0.05;
   final double _gravity = 9.8;
@@ -72,9 +69,6 @@ class Player extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() async {
     _loadAllAnimations();
-
-    spriteImage = await game.images.load(
-        '${GameVars.charactersDir}/${game.player.character}/Idle (32x32)${GameVars.charactersImgFileExt}');
 
     // debugMode = true;
     startingPosition = Vector2(position.x, position.y);
@@ -277,7 +271,7 @@ class Player extends SpriteAnimationGroupComponent
 
   void _respawn() async {
     // remove health
-    game.playerData.removeHealth();
+    game.removeHealth();
 
     game.sound.play(GameSound.hit);
 

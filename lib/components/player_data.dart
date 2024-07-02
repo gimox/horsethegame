@@ -21,12 +21,4 @@ class PlayerData {
     health = ValueNotifier<int>(startHealth);
     level = ValueNotifier<int>(startLevel);
   }
-
-  void removeHealth() {
-    if (health.value > 0) {
-      health.value -= 1;
-    } else {
-      health.value = 0;
-    }
-  }
 }

@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/foundation.dart';
 import 'package:horsethegame/app/app_theme.dart';
 import 'package:horsethegame/components/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
@@ -13,6 +15,8 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
   late final TextComponent levelTextComponent;
   late final SpriteComponent spriteHealthComponent;
   late final List<SpriteComponent> spriteHealthList;
+  late final Image spriteImage;
+  late final Image pauseImage;
 
   double spriteHealthSize = 22;
 
@@ -30,30 +34,21 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
   @override
   Future<void> onLoad() async {
     spriteHealthList = [];
+
+    // evaluate hud images
+    _getImages();
+
     await _addHealthTextComponent();
     await _addSpriteHealth();
     await _addLevelText();
     await _addScoreTextComponent();
+    await _addPauseImage();
+  }
 
-    final Image pauseImage = await game.images.load('Menu/Buttons/Play.png');
-
-    final pauseButton = SpriteButtonComponent(
-      onPressed: () {
-        game.router.pushOverlay(PauseMenu.id);
-        //game.pauseEngine();
-        // game.overlays.add(PauseMenu.id);
-      },
-      button: Sprite(
-        pauseImage,
-        srcSize: Vector2.all(32),
-        srcPosition: Vector2(0, 0),
-      ),
-      size: Vector2.all(32),
-      anchor: Anchor.topCenter,
-      position: Vector2(game.size.x / 2, 10),
-    );
-
-    await add(pauseButton);
+  void _getImages() {
+    pauseImage = game.images.fromCache('Menu/Buttons/Play.png');
+    spriteImage = game.images.fromCache(
+        '${GameVars.charactersDir}/${game.player.character}/Idle (32x32)${GameVars.charactersImgFileExt}');
   }
 
   Future<void> _addHealthTextComponent() async {
@@ -99,7 +94,7 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
       spriteHealthList.add(
         SpriteComponent(
           sprite: Sprite(
-            game.player.spriteImage,
+            spriteImage,
             srcSize: Vector2(32, 32),
           ),
           size: Vector2(spriteHealthSize, spriteHealthSize),
@@ -114,7 +109,23 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
       );
     }
 
-    addAll(spriteHealthList);
+    await addAll(spriteHealthList);
+  }
+
+  Future<void> _addPauseImage() async {
+    final pauseButton = SpriteButtonComponent(
+      onPressed: () => game.router.pushOverlay(PauseMenu.id),
+      button: Sprite(
+        pauseImage,
+        srcSize: Vector2.all(32),
+        srcPosition: Vector2(0, 0),
+      ),
+      size: Vector2.all(32),
+      anchor: Anchor.topCenter,
+      position: Vector2(game.size.x / 2, 10),
+    );
+
+    await add(pauseButton);
   }
 
   void onScoreChange() {
@@ -123,9 +134,56 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
 
   void onHealthChange() {
     healthTextComponent.text = 'x${game.playerData.health.value}';
+    _updateSpriteHealth();
   }
 
   void onLevelChange() {
     levelTextComponent.text = 'Level: ${game.playerData.level.value}';
+  }
+
+  void _updateSpriteHealth() {
+    if (spriteHealthList.length > game.playerData.health.value) {
+      // remove
+      if (kDebugMode) {
+        print('-> remove');
+      }
+      spriteHealthList.last.removeFromParent();
+      spriteHealthList.removeLast();
+
+      if (kDebugMode) {
+        print('-> ${spriteHealthList.length}');
+      }
+      if (spriteHealthList.length == 1) _blinkSpriteHealth();
+    } else {
+      // add
+      // this can be to excessive...but it's called once at restart.
+      if (kDebugMode) {
+        print('-> add');
+      }
+      removeAll(spriteHealthList);
+      spriteHealthList.clear();
+      _addSpriteHealth();
+    }
+
+    if (game.playerData.health.value == 0){
+      game.router.pushNamed('gameOver');
+    }
+  }
+
+  void _blinkSpriteHealth() {
+    if (kDebugMode) {
+      print('-> add blink effect to sprite health');
+    }
+    SpriteComponent newSprite = spriteHealthList.last;
+
+    spriteHealthList.last.removeFromParent();
+
+    newSprite.add(
+      OpacityEffect.to(
+        0.2,
+        EffectController(duration: 0.75, infinite: true),
+      ),
+    );
+    add(newSprite);
   }
 }

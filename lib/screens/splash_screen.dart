@@ -3,29 +3,67 @@
  * Giorgio Modoni <modogio@gmail.com>
  */
 
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/palette.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:horsethegame/app/app_theme.dart';
 import 'package:horsethegame/components/utils/bsckground_util.dart';
 import 'package:horsethegame/my_game.dart';
 
+
+
+class SplashWorld extends World  with HasGameRef<MyGame>{
+  @override
+  FutureOr<void> onLoad() async {
+    final TextBoxComponent t = TextBoxComponent(
+      text: '[Router demo]',
+      position: Vector2(640 / 2 - 100, 360 / 2 - 50),
+      textRenderer: regular,
+      align: Anchor.center,
+      size: Vector2(200, 100),
+    );
+
+    await add(t);
+
+    final img = game.images.fromCache('Menu/splash.png');
+
+    final s = SpriteComponent(
+        sprite: Sprite(
+      img,
+      srcSize: Vector2(640, 360),
+    ),
+      position: Vector2.zero(),
+
+    );
+
+    add(s);
+
+
+    return super.onLoad();
+  }
+}
+
 class SplashScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
+  late CameraComponent cam;
+
   @override
   Future<void> onLoad() async {
+    World world = SplashWorld();
 
-    addAll([
+    cam = CameraComponent.withFixedResolution(
+      world: world,
+      width: game.fixedResolution.x,
+      height: game.fixedResolution.y,
+    )..viewfinder.anchor = Anchor.topLeft;
+
+    await addAll([
+      cam,
+      world,
       BackgroundUtil(const Color(0xff282828)),
-      TextBoxComponent(
-        text: '[Router demo]',
-        textRenderer: TextPaint(
-          style: const TextStyle(
-            color: Color(0x66ffffff),
-            fontSize: 16,
-          ),
-        ),
-        align: Anchor.center,
-        size: game.canvasSize,
-      ),
     ]);
   }
 
@@ -34,9 +72,7 @@ class SplashScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
 
   @override
   Future<void> onTapUp(TapUpEvent event) async {
-    await game.worldLevel.startGame();
     game.router.pushNamed('play');
+    await game.worldLevel.startGame();
   }
 }
-
-

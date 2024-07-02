@@ -5,38 +5,35 @@
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/game.dart';
-import 'package:flame/rendering.dart';
+import 'package:horsethegame/components/utils/bsckground_util.dart';
 import 'package:horsethegame/my_game.dart';
+import 'package:flutter/rendering.dart';
 
-class GameOverScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
+
+class GameOverScreen extends Component with TapCallbacks, HasGameRef<MyGame> {
+  @override
+  Future<void> onLoad() async {
+    addAll([
+      BackgroundUtil(const Color(0xff282828)),
+      TextBoxComponent(
+        text: '[GAME OVER]',
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Color(0x66ffffff),
+            fontSize: 16,
+          ),
+        ),
+        align: Anchor.center,
+        size: game.canvasSize,
+      ),
+    ]);
+  }
+
   @override
   bool containsLocalPoint(Vector2 point) => true;
 
   @override
   void onTapUp(TapUpEvent event) {
-    game.router.pop();
-    game.router.pushNamed('splash');
-  }
-}
-
-class GameOverRoute extends Route {
-  GameOverRoute() : super(GameOverRoute.new, transparent: true);
-
-  @override
-  void onPush(Route? previousRoute) {
-    // print("name: ${previousRoute?.name}");
-    previousRoute!
-      ..stopTime()
-      ..addRenderEffect(
-        PaintDecorator.grayscale(opacity: 0.2)..addBlur(3.0),
-      );
-  }
-
-  @override
-  void onPop(Route nextRoute) {
-    nextRoute
-      ..resumeTime()
-      ..removeRenderEffect();
+    game.router.pushReplacementNamed('splash');
   }
 }

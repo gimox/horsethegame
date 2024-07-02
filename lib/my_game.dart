@@ -4,17 +4,17 @@
  */
 
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/player_data.dart';
 import 'package:horsethegame/components/game_play.dart';
-import 'package:horsethegame/screens/pause_screen.dart';
+import 'package:horsethegame/screens/game_over_screen.dart';
 import 'package:horsethegame/screens/play_screen.dart';
 import 'package:horsethegame/screens/splash_screen.dart';
 import 'components/game_vars.dart';
@@ -66,9 +66,17 @@ class MyGame extends FlameGame
   late final RouterComponent router;
 
   late Level worldGameLevel;
+  late final Image spriteImage;
 
   @override
   FutureOr<void> onLoad() async {
+    if (kDebugMode) {
+      print("* onLoad my_game call");
+    }
+
+    // load all image into cache
+    await images.loadAllImages();
+
     // player
     playerData = PlayerData(
       GameVars.playerStartHealth,
@@ -85,9 +93,6 @@ class MyGame extends FlameGame
     await sound.init(); // cache all audio files
     add(sound);
 
-    // load all image into cache
-    await images.loadAllImages();
-
     // fix resize
     camera.viewport = FixedResolutionViewport(resolution: fixedResolution);
 
@@ -97,10 +102,6 @@ class MyGame extends FlameGame
     // manage level loading
     worldLevel = GamePlay();
     add(worldLevel);
-
-    if (kDebugMode) {
-      print("* onLoad my_game call");
-    }
 
     // load router
     await _addRouter();
@@ -121,10 +122,20 @@ class MyGame extends FlameGame
         routes: {
           'splash': Route(SplashScreen.new),
           'play': Route(PlayScreen.new),
-          'pause': PauseRoute(),
+          'gameOver': Route(GameOverScreen.new),
         },
         initialRoute: 'splash',
       ),
     );
   }
+
+  void removeHealth() {
+    if (playerData.health.value > 0) {
+      playerData.health.value -= 1;
+    } else {
+      playerData.health.value = 0;
+    }
+  }
+
+
 }
