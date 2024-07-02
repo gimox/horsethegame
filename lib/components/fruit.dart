@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
+import 'package:horsethegame/components/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Fruit extends SpriteAnimationComponent
@@ -39,7 +40,8 @@ class Fruit extends SpriteAnimationComponent
       ),
     );
     animation = SpriteAnimation.fromFrameData(
-      game.images.fromCache('Items/Fruits/$fruit.png'),
+      game.images.fromCache(
+          '${GameVars.itemsDir}/${GameVars.fruitsDir}/$fruit${GameVars.fruitsImgFileExt}'),
       SpriteAnimationData.sequenced(
         amount: 17,
         stepTime: stepTime,
@@ -55,7 +57,8 @@ class Fruit extends SpriteAnimationComponent
       game.sound.play(GameSound.pickup);
 
       animation = SpriteAnimation.fromFrameData(
-        game.images.fromCache('Items/Fruits/Collected.png'),
+        game.images.fromCache(
+            '${GameVars.itemsDir}/${GameVars.fruitsDir}/Collected${GameVars.fruitsImgFileExt}'),
         SpriteAnimationData.sequenced(
           amount: 6,
           stepTime: stepTime,

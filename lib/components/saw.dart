@@ -7,6 +7,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:horsethegame/components/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Saw extends SpriteAnimationComponent with HasGameRef<MyGame> {
@@ -44,7 +45,7 @@ class Saw extends SpriteAnimationComponent with HasGameRef<MyGame> {
     }
 
     animation = SpriteAnimation.fromFrameData(
-      game.images.fromCache('Traps/Saw/On (38x38).png'),
+      game.images.fromCache('${GameVars.trapsDir}/Saw/On (38x38).png'),
       SpriteAnimationData.sequenced(
         amount: 8,
         stepTime: sawSpeed,

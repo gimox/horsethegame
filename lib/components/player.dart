@@ -4,6 +4,7 @@
  */
 
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -12,8 +13,9 @@ import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
 import 'package:horsethegame/components/fruit.dart';
+import 'package:horsethegame/components/game_vars.dart';
 import 'package:horsethegame/components/saw.dart';
-import 'package:horsethegame/components/utils.dart';
+import 'package:horsethegame/components/utils/utils.dart';
 import 'package:horsethegame/my_game.dart';
 
 import 'checkpoint.dart';
@@ -42,6 +44,8 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation appearingAnimation;
   late final SpriteAnimation disappearingAnimation;
 
+  late final Image spriteImage;
+
   final double stepTime = 0.05;
   final double _gravity = 9.8;
   final double _jumpForce = 260;
@@ -66,8 +70,12 @@ class Player extends SpriteAnimationGroupComponent
   double health = 1;
 
   @override
-  FutureOr<void> onLoad() {
+  FutureOr<void> onLoad() async {
     _loadAllAnimations();
+
+    spriteImage = await game.images.load(
+        '${GameVars.charactersDir}/${game.player.character}/Idle (32x32)${GameVars.charactersImgFileExt}');
+
     // debugMode = true;
     startingPosition = Vector2(position.x, position.y);
 
@@ -151,7 +159,8 @@ class Player extends SpriteAnimationGroupComponent
 
   SpriteAnimation _spriteAnimation(String state, int amount) {
     return SpriteAnimation.fromFrameData(
-      game.images.fromCache("Main Characters/$character/$state (32x32).png"),
+      game.images.fromCache(
+          "${GameVars.charactersDir}/$character/$state (32x32)${GameVars.charactersImgFileExt}"),
       SpriteAnimationData.sequenced(
         amount: amount,
         stepTime: stepTime,
@@ -162,7 +171,8 @@ class Player extends SpriteAnimationGroupComponent
 
   SpriteAnimation _specialSpriteAnimation(String state, int amount) {
     return SpriteAnimation.fromFrameData(
-      game.images.fromCache("Main Characters/$state (96x96).png"),
+      game.images.fromCache(
+          "${GameVars.charactersDir}/$state (96x96)${GameVars.charactersImgFileExt}"),
       SpriteAnimationData.sequenced(
         amount: amount,
         stepTime: stepTime,

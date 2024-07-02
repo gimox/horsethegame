@@ -5,15 +5,20 @@ import 'package:flutter/foundation.dart';
 import 'package:horsethegame/my_game.dart';
 
 class PlayScreen extends Component with HasGameRef<MyGame> {
-
   @override
   Future<void> onLoad() async {
-
     if (kDebugMode) {
-      print('play screen called');
+      print('* onLoad PlayScreen called');
     }
 
-    await game.worldLevel.loadLevel();
+    if (game.currentLevelIndex != game.playerData.startLevel ||
+        game.playerData.health.value != game.playerData.startHealth ||
+        game.playerData.score.value != game.playerData.startScore) {
+      if (kDebugMode) {
+        print('PlayScreen load startGame');
+      }
+      await game.worldLevel.startGame();
+    }
 
     return super.onLoad();
   }

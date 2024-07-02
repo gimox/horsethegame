@@ -13,12 +13,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/player_data.dart';
-import 'package:horsethegame/components/world_level.dart';
+import 'package:horsethegame/components/game_play.dart';
 import 'package:horsethegame/screens/pause_screen.dart';
 import 'package:horsethegame/screens/play_screen.dart';
 import 'package:horsethegame/screens/splash_screen.dart';
+import 'components/game_vars.dart';
 import 'components/hud.dart';
 import 'components/joystick/joystick.dart';
+import 'components/level.dart';
 import 'components/player.dart';
 
 class MyGame extends FlameGame
@@ -30,7 +32,7 @@ class MyGame extends FlameGame
   @override
   Color backgroundColor() => const Color(0xFF211F30);
 
-  Player player = Player(character: 'Mask Dude');
+  Player player = Player(character: GameVars.characters);
 
   // joystick
   bool showControls = false;
@@ -38,15 +40,16 @@ class MyGame extends FlameGame
 
   // sound
   late AudioManager sound;
-  bool playSounds = false;
-  double soundVolume = 1.0;
+  bool playSounds = GameVars.playSound;
+  double soundVolume = GameVars.soundMusicVolumes;
 
   // level
-  List<String> levelNames = ['level_01', 'level_01'];
-  int currentLevelIndex = 0;
+  List<String> levelNames = GameVars.levelNames;
+  int currentLevelIndex = GameVars.startLevelIndex;
 
   // resolution & camera
-  final fixedResolution = Vector2(640, 360);
+  final Vector2 fixedResolution =
+      Vector2(GameVars.resolution['width']!, GameVars.resolution['height']!);
   late CameraComponent cam;
 
   // hud
@@ -54,17 +57,24 @@ class MyGame extends FlameGame
   List<Component> hudComponents = [];
 
   // level loading
-  late final WorldLevel worldLevel;
+  late final GamePlay worldLevel;
 
   // score & lives
+  late final PlayerData playerData;
 
-  final PlayerData playerData = PlayerData(3, 0, 0);
-
+  // add routing
   late final RouterComponent router;
+
+  late Level worldGameLevel;
 
   @override
   FutureOr<void> onLoad() async {
-    playerData.initNotifier();
+    // player
+    playerData = PlayerData(
+      GameVars.playerStartHealth,
+      GameVars.playerStartScore,
+      GameVars.playerStartLevel,
+    )..initNotifier();
 
     // set hud default
     hud = Hud(priority: 1);
@@ -85,25 +95,15 @@ class MyGame extends FlameGame
     add(Joystick());
 
     // manage level loading
-    worldLevel = WorldLevel();
+    worldLevel = GamePlay();
     add(worldLevel);
 
     if (kDebugMode) {
-      print("game onload");
+      print("* onLoad my_game call");
     }
-    // load game level
 
-
-    add(
-      router = RouterComponent(
-        routes: {
-          'splash': Route(SplashScreen.new),
-          'play': Route(PlayScreen.new),
-          'pause':PauseRoute(),
-        },
-        initialRoute: 'splash',
-      ),
-    );
+    // load router
+    await _addRouter();
 
     return super.onLoad();
   }
@@ -113,5 +113,18 @@ class MyGame extends FlameGame
     //   hud?.removeFromParent();
 
     super.onRemove();
+  }
+
+  Future<void> _addRouter() async {
+    await add(
+      router = RouterComponent(
+        routes: {
+          'splash': Route(SplashScreen.new),
+          'play': Route(PlayScreen.new),
+          'pause': PauseRoute(),
+        },
+        initialRoute: 'splash',
+      ),
+    );
   }
 }

@@ -6,15 +6,15 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/rendering.dart';
+import 'package:horsethegame/components/utils/bsckground_util.dart';
 import 'package:horsethegame/my_game.dart';
 
 class SplashScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
-
-
   @override
   Future<void> onLoad() async {
+
     addAll([
-      Background(const Color(0xff282828)),
+      BackgroundUtil(const Color(0xff282828)),
       TextBoxComponent(
         text: '[Router demo]',
         textRenderer: TextPaint(
@@ -33,15 +33,10 @@ class SplashScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
   bool containsLocalPoint(Vector2 point) => true;
 
   @override
-  void onTapUp(TapUpEvent event) => game.router.pushNamed('play');
-}
-
-class Background extends Component {
-  Background(this.color);
-  final Color color;
-
-  @override
-  void render(Canvas canvas) {
-    canvas.drawColor(color, BlendMode.srcATop);
+  Future<void> onTapUp(TapUpEvent event) async {
+    await game.worldLevel.startGame();
+    game.router.pushNamed('play');
   }
 }
+
+

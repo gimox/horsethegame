@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Giorgio Modoni <modogio@gmail.com>
+ */
+
 import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/player.dart';
 

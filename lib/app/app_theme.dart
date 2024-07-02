@@ -18,3 +18,11 @@ final regular = TextPaint(
 
   ),
 );
+
+final small = TextPaint(
+  style: TextStyle(
+    fontSize: 16.0,
+    color: BasicPalette.white.color,
+
+  ),
+);

@@ -16,9 +16,6 @@ class PauseRoute extends Route {
   @override
   void onPush(Route? previousRoute) {
    // print("name: ${previousRoute?.name}");
-
-
-
     previousRoute!
       ..stopTime()
       ..addRenderEffect(
@@ -64,7 +61,6 @@ class PauseScreen extends Component
   bool containsLocalPoint(Vector2 point) => true;
 
   @override
-
   void onTapUp(TapUpEvent event) {
   //  game.resumeEngine();
     game.router.pop();
