@@ -17,7 +17,7 @@ class PlayScreen extends Component with HasGameRef<MyGame> {
       if (kDebugMode) {
         print('PlayScreen load startGame');
       }
-      await game.worldLevel.startGame();
+      await game.gamePlay.startGame();
     }
 
     return super.onLoad();

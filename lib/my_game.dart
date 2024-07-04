@@ -12,13 +12,12 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:horsethegame/components/audio_manager.dart';
+import 'package:horsethegame/components/game_router.dart';
+import 'package:horsethegame/components/hud/health_block_hud.dart';
 import 'package:horsethegame/components/player_data.dart';
 import 'package:horsethegame/components/game_play.dart';
-import 'package:horsethegame/screens/game_over_screen.dart';
-import 'package:horsethegame/screens/play_screen.dart';
-import 'package:horsethegame/screens/splash_screen.dart';
-import 'components/game_vars.dart';
-import 'components/hud.dart';
+import 'components/utils/game_vars.dart';
+import 'components/hud/hud.dart';
 import 'components/joystick/joystick.dart';
 import 'components/level.dart';
 import 'components/player.dart';
@@ -30,12 +29,12 @@ class MyGame extends FlameGame
         HasCollisionDetection,
         TapCallbacks {
   @override
-  Color backgroundColor() => const Color(0xFF211F30);
+  Color backgroundColor() => GameVars.defaultBackgroundColorTile;
 
   Player player = Player(character: GameVars.characters);
 
   // joystick
-  bool showControls = false;
+  bool showControls = GameVars.defaultShowControl;
   late final Joystick joystickCtrl;
 
   // sound
@@ -54,10 +53,11 @@ class MyGame extends FlameGame
 
   // hud
   late final Hud hud;
+
   List<Component> hudComponents = [];
 
   // level loading
-  late final GamePlay worldLevel;
+  late final GamePlay gamePlay;
 
   // score & lives
   late final PlayerData playerData;
@@ -100,42 +100,13 @@ class MyGame extends FlameGame
     add(Joystick());
 
     // manage level loading
-    worldLevel = GamePlay();
-    add(worldLevel);
+    gamePlay = GamePlay();
+    add(gamePlay);
 
     // load router
-    await _addRouter();
+    router = GameRouter().getRoutes();
+    await add(router);
 
     return super.onLoad();
   }
-
-  @override
-  void onRemove() {
-    //   hud?.removeFromParent();
-
-    super.onRemove();
-  }
-
-  Future<void> _addRouter() async {
-    await add(
-      router = RouterComponent(
-        routes: {
-          'splash': Route(SplashScreen.new),
-          'play': Route(PlayScreen.new),
-          'gameOver': Route(GameOverScreen.new),
-        },
-        initialRoute: 'splash',
-      ),
-    );
-  }
-
-  void removeHealth() {
-    if (playerData.health.value > 0) {
-      playerData.health.value -= 1;
-    } else {
-      playerData.health.value = 0;
-    }
-  }
-
-
 }

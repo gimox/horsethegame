@@ -7,7 +7,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:horsethegame/components/game_vars.dart';
+import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Saw extends SpriteAnimationComponent with HasGameRef<MyGame> {
@@ -32,9 +32,10 @@ class Saw extends SpriteAnimationComponent with HasGameRef<MyGame> {
 
   @override
   FutureOr<void> onLoad() {
+    debugMode = GameVars.sawDebug;
     priority = -1;
+
     add(CircleHitbox());
-    // debugMode = true;
 
     if (isVertical) {
       rangeNeg = position.y - offNeg * tileSize;

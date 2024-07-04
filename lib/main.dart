@@ -74,9 +74,6 @@ class MyApp extends StatelessWidget {
         body: GameWidget<MyGame>(
           game: kDebugMode ? MyGame() : game,
           overlayBuilderMap: {
-            //  MainMenu.id: (context, game) => MainMenu(game: game),
-            //  SettingsMenu.id: (context, game) => SettingsMenu(game: game),
-            //  GameoverMenu.id: (context, game) => GameoverMenu(game: game),
             PauseMenu.id: (context, game) => PauseMenu(game: game),
           },
           //  initialActiveOverlays: const [MainMenu.id],

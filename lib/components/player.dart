@@ -4,7 +4,6 @@
  */
 
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -14,7 +13,7 @@ import 'package:horsethegame/components/checkpoint.dart';
 import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
 import 'package:horsethegame/components/fruit.dart';
-import 'package:horsethegame/components/game_vars.dart';
+import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/components/saw.dart';
 import 'package:horsethegame/components/utils/utils.dart';
 import 'package:horsethegame/my_game.dart';
@@ -43,12 +42,14 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation appearingAnimation;
   late final SpriteAnimation disappearingAnimation;
 
-  final double stepTime = 0.05;
-  final double _gravity = 9.8;
-  final double _jumpForce = 260;
-  final double _terminalVelocity = 300;
+  final double stepTime = GameVars.stepTime;
+  final double _gravity = GameVars.gravity;
+  final double _jumpForce = GameVars.jumpForce;
+  final double _terminalVelocity = GameVars.terminalVelocity;
+  final double moveSpeed = GameVars.moveSpeed;
+  final double playerSpriteSize = GameVars.playerSpriteSize;
+
   double horizontalMovement = 0;
-  double moveSpeed = 100;
   Vector2 startingPosition = Vector2.zero();
   Vector2 velocity = Vector2.zero();
   bool isOnGround = false;
@@ -56,7 +57,7 @@ class Player extends SpriteAnimationGroupComponent
   bool gotHit = false;
   bool reachedCheckpoint = false;
   List<CollisionBlock> collisionBlocks = [];
-  CustomHitbox hitbox = CustomHitbox(
+  CustomHitbox hitBox = CustomHitbox(
     offsetX: 10,
     offsetY: 4,
     width: 14,
@@ -64,18 +65,18 @@ class Player extends SpriteAnimationGroupComponent
   );
   double fixedDeltaTime = 1 / 60;
   double accumulatedTime = 0;
-  double health = 1;
 
   @override
   FutureOr<void> onLoad() async {
+    debugMode = GameVars.playerDebug;
+
     _loadAllAnimations();
 
-    // debugMode = true;
     startingPosition = Vector2(position.x, position.y);
 
     add(RectangleHitbox(
-      position: Vector2(hitbox.offsetX, hitbox.offsetY),
-      size: Vector2(hitbox.width, hitbox.height),
+      position: Vector2(hitBox.offsetX, hitBox.offsetY),
+      size: Vector2(hitBox.width, hitBox.height),
     ));
     return super.onLoad();
   }
@@ -154,11 +155,11 @@ class Player extends SpriteAnimationGroupComponent
   SpriteAnimation _spriteAnimation(String state, int amount) {
     return SpriteAnimation.fromFrameData(
       game.images.fromCache(
-          "${GameVars.charactersDir}/$character/$state (32x32)${GameVars.charactersImgFileExt}"),
+          "${GameVars.charactersDir}/$character/$state (${playerSpriteSize.toInt()}x${playerSpriteSize.toInt()})${GameVars.charactersImgFileExt}"),
       SpriteAnimationData.sequenced(
         amount: amount,
         stepTime: stepTime,
-        textureSize: Vector2.all(32),
+        textureSize: Vector2.all(playerSpriteSize),
       ),
     );
   }
@@ -208,7 +209,6 @@ class Player extends SpriteAnimationGroupComponent
   void _playerJump(double dt) {
     game.sound.play(GameSound.jump);
 
-    //  if (game.playSounds) FlameAudio.play('jump', volume: game.soundVolume);
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;
     isOnGround = false;
@@ -221,12 +221,12 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.x > 0) {
             velocity.x = 0;
-            position.x = block.x - hitbox.offsetX - hitbox.width;
+            position.x = block.x - hitBox.offsetX - hitBox.width;
             break;
           }
           if (velocity.x < 0) {
             velocity.x = 0;
-            position.x = block.x + block.width + hitbox.width + hitbox.offsetX;
+            position.x = block.x + block.width + hitBox.width + hitBox.offsetX;
             break;
           }
         }
@@ -247,7 +247,7 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - hitbox.height - hitbox.offsetY; //width?
+            position.y = block.y - hitBox.height - hitBox.offsetY; //width?
             isOnGround = true;
             break;
           }
@@ -256,13 +256,13 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - hitbox.height - hitbox.offsetY;
+            position.y = block.y - hitBox.height - hitBox.offsetY;
             isOnGround = true;
             break;
           }
           if (velocity.y < 0) {
             velocity.y = 0;
-            position.y = block.y + block.height - hitbox.offsetY;
+            position.y = block.y + block.height - hitBox.offsetY;
           }
         }
       }
@@ -271,7 +271,7 @@ class Player extends SpriteAnimationGroupComponent
 
   void _respawn() async {
     // remove health
-    game.removeHealth();
+    game.gamePlay.removeHealth();
 
     game.sound.play(GameSound.hit);
 
@@ -291,6 +291,7 @@ class Player extends SpriteAnimationGroupComponent
 
     velocity = Vector2.zero();
     position = startingPosition;
+
     _updatePlayerState();
     Future.delayed(canMoveDuration, () => gotHit = false);
   }
@@ -301,9 +302,9 @@ class Player extends SpriteAnimationGroupComponent
     game.sound.play(GameSound.disappear);
 
     if (scale.x > 0) {
-      position = position - Vector2.all(32);
+      position = position - Vector2.all(playerSpriteSize);
     } else if (scale.x < 0) {
-      position = position + Vector2(32, -32);
+      position = position + Vector2(playerSpriteSize, playerSpriteSize * -1);
     }
 
     current = PlayerState.disappearing;
@@ -312,9 +313,8 @@ class Player extends SpriteAnimationGroupComponent
     animationTicker?.reset();
 
     reachedCheckpoint = false;
-    position = Vector2.all(-640);
+    position = Vector2.all(GameVars.resolution['width']! * -1);
 
-    const waitToChangeDuration = Duration(seconds: 3);
-    Future.delayed(waitToChangeDuration, () => game.worldLevel.loadNextLevel());
+    game.gamePlay.onChangeLevel();
   }
 }

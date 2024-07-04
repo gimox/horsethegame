@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:horsethegame/components/player.dart';
+import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Checkpoint extends SpriteAnimationComponent
@@ -16,7 +17,8 @@ class Checkpoint extends SpriteAnimationComponent
 
   @override
   FutureOr<void> onLoad() {
-    // debugMode = true;
+    debugMode = GameVars.checkpointDebug;
+
     add(RectangleHitbox(
       position: Vector2(18, 56),
       size: Vector2(12, 8),
@@ -59,7 +61,7 @@ class Checkpoint extends SpriteAnimationComponent
 
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache(
-          'Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle)(64x64).png'),
+          '${GameVars.itemsDir}/${GameVars.checkpointDir}/Checkpoint/Checkpoint (Flag Idle)(64x64).png'),
       SpriteAnimationData.sequenced(
         amount: 10,
         stepTime: 0.05,

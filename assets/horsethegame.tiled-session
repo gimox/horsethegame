@@ -5,6 +5,8 @@
     },
     "activeFile": "tiles/level_01.tmx",
     "expandedProjectPaths": [
+        ".",
+        "tiles"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -16,8 +18,20 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 298,
-                "y": 216.5
+                "x": 298.5,
+                "y": 217
+            }
+        },
+        "tiles/level_02.tmx": {
+            "expandedObjectLayers": [
+                3,
+                2
+            ],
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 320.5,
+                "y": 178
             }
         }
     },
@@ -28,13 +42,16 @@
     "map.tileWidth": 16,
     "map.width": 40,
     "openFiles": [
+        "tiles/level_02.tmx",
+        "tiles/horseTileSet.tsx",
         "tiles/level_01.tmx"
     ],
     "project": "horsethegame.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "tiles/level_01.tmx",
-        "tiles/horseTileSet.tsx"
+        "tiles/level_02.tmx",
+        "tiles/horseTileSet.tsx",
+        "tiles/level_01.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

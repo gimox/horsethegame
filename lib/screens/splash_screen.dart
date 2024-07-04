@@ -10,7 +10,7 @@ import 'package:flame/events.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:horsethegame/app/app_theme.dart';
+import 'package:horsethegame/app/game_theme.dart';
 import 'package:horsethegame/components/utils/bsckground_util.dart';
 import 'package:horsethegame/my_game.dart';
 
@@ -20,15 +20,16 @@ class SplashWorld extends World  with HasGameRef<MyGame>{
   @override
   FutureOr<void> onLoad() async {
     final TextBoxComponent t = TextBoxComponent(
-      text: '[Router demo]',
-      position: Vector2(640 / 2 - 100, 360 / 2 - 50),
-      textRenderer: regular,
+      text: '[START GAME]',
+    //  position: Vector2(640 / 2 - 150, 360 / 2 - 50),
+      textRenderer: big,
       align: Anchor.center,
-      size: Vector2(200, 100),
+    //  size: Vector2(300, 100),
+      size: game.canvasSize
     );
 
     await add(t);
-
+/*
     final img = game.images.fromCache('Menu/splash.png');
 
     final s = SpriteComponent(
@@ -41,6 +42,8 @@ class SplashWorld extends World  with HasGameRef<MyGame>{
     );
 
     add(s);
+
+ */
 
 
     return super.onLoad();
@@ -73,6 +76,6 @@ class SplashScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
   @override
   Future<void> onTapUp(TapUpEvent event) async {
     game.router.pushNamed('play');
-    await game.worldLevel.startGame();
+    await game.gamePlay.startGame();
   }
 }

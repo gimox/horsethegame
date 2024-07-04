@@ -8,11 +8,13 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:horsethegame/components/level.dart';
+import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class GamePlay extends Component with HasGameRef<MyGame> {
   GamePlay();
 
+  // call this to only on start game
   FutureOr<void> startGame() async {
     if (kDebugMode) {
       print('* startGame call');
@@ -24,6 +26,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     await _loadLevel();
   }
 
+  // call to change level
   FutureOr<void> loadNextLevel() async {
     removeWhere((component) => component is Level);
 
@@ -31,7 +34,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.currentLevelIndex++;
     } else {
       // no more level
-      game.router.pushReplacementNamed('splash');
+      game.router.pushReplacementNamed('win');
     }
 
     await _loadLevel();
@@ -81,5 +84,23 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     game.playerData.health.value = game.playerData.startHealth;
     game.playerData.score.value = game.playerData.startScore;
     game.playerData.level.value = game.playerData.startLevel;
+  }
+
+  void removeHealth() {
+    if (game.playerData.health.value > 0) {
+      game.playerData.health.value -= 1;
+    } else {
+      game.playerData.health.value = 0;
+    }
+  }
+
+  Future<void> onChangeLevel() async {
+    const waitToChangeDuration =
+        Duration(seconds: GameVars.changeLevelDuration);
+    await Future.delayed(waitToChangeDuration, () => loadNextLevel());
+  }
+
+  Future<void> onGameOver() async {
+    game.router.pushNamed('gameOver');
   }
 }

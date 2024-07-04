@@ -7,7 +7,7 @@ import 'package:horsethegame/components/collision_block.dart';
 import 'package:horsethegame/components/player.dart';
 
 bool checkCollision(Player player, CollisionBlock block) {
-  final hitbox = player.hitbox;
+  final hitbox = player.hitBox;
   final playerX = player.position.x + hitbox.offsetX;
   final playerY = player.position.y + hitbox.offsetY;
   final playerWidth = hitbox.width;

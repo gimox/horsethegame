@@ -4,7 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/custom_hitbox.dart';
-import 'package:horsethegame/components/game_vars.dart';
+import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Fruit extends SpriteAnimationComponent
@@ -18,7 +18,7 @@ class Fruit extends SpriteAnimationComponent
   });
 
   final double stepTime = 0.05;
-  final hitbox = CustomHitbox(
+  final hitBox = CustomHitbox(
     offsetX: 10,
     offsetY: 10,
     width: 12,
@@ -29,13 +29,13 @@ class Fruit extends SpriteAnimationComponent
 
   @override
   FutureOr<void> onLoad() {
-    //  debugMode = true;
+    debugMode = GameVars.fruitDebug;
     priority = -1;
 
     add(
       RectangleHitbox(
-        position: Vector2(hitbox.offsetX, hitbox.offsetY),
-        size: Vector2(hitbox.width, hitbox.height),
+        position: Vector2(hitBox.offsetX, hitBox.offsetY),
+        size: Vector2(hitBox.width, hitBox.height),
         collisionType: CollisionType.passive,
       ),
     );
@@ -55,6 +55,7 @@ class Fruit extends SpriteAnimationComponent
     if (!collected) {
       collected = true;
       game.sound.play(GameSound.pickup);
+      game.playerData.score.value += 1;
 
       animation = SpriteAnimation.fromFrameData(
         game.images.fromCache(

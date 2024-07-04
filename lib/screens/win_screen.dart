@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2024.
  * Giorgio Modoni <modogio@gmail.com>
@@ -11,13 +12,13 @@ import 'package:horsethegame/my_game.dart';
 import 'package:flutter/rendering.dart';
 
 
-class GameOverScreen extends Component with TapCallbacks, HasGameRef<MyGame> {
+class WinScreen extends Component with TapCallbacks, HasGameRef<MyGame> {
   @override
   Future<void> onLoad() async {
     addAll([
       BackgroundUtil(const Color(0xff282828)),
       TextBoxComponent(
-        text: '[GAME OVER]',
+        text: '[YOU WIN]',
         textRenderer: big,
         align: Anchor.center,
         size: game.canvasSize,
