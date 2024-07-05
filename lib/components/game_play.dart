@@ -111,6 +111,14 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   void soundToggle() {
+
+    // fix route error, enable button only if route is  not null
+    // when overlay route display: name== null,
+    String? routeName = game.router.currentRoute.name;
+    if (routeName == null) {
+      return;
+    }
+
     game.overlayDuration = 2;
     if (game.playSounds) {
       game.overlayMessage = "Sound OFF";
@@ -121,6 +129,8 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.playSounds = true;
       game.sound.resume();
     }
+
+
     game.router.pushRoute(GameTextOverlayScreenRoute());
   }
 

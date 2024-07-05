@@ -34,8 +34,9 @@ class GameTextOverlayScreenRoute extends Route {
 class GameTextOverlayScreen extends Component with HasGameReference<MyGame> {
 
   @override
-  void onMount() {
-    Future.delayed(Duration(seconds: game.overlayDuration), () {
+  void onMount() async {
+   await  Future.delayed(Duration(seconds: game.overlayDuration), () {
+
       game.router.pop();
     });
     super.onMount();
