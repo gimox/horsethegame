@@ -13,7 +13,6 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/game_router.dart';
-import 'package:horsethegame/components/hud/health_block_hud.dart';
 import 'package:horsethegame/components/player_data.dart';
 import 'package:horsethegame/components/game_play.dart';
 import 'components/utils/game_vars.dart';
@@ -40,7 +39,8 @@ class MyGame extends FlameGame
   // sound
   late AudioManager sound;
   bool playSounds = GameVars.playSound;
-  double soundVolume = GameVars.soundMusicVolumes;
+  double soundSfxVolumes = GameVars.soundSfxVolumes;
+  double soundMusicVolumes = GameVars.soundMusicVolumes;
 
   // level
   List<String> levelNames = GameVars.levelNames;
@@ -67,6 +67,9 @@ class MyGame extends FlameGame
 
   late Level worldGameLevel;
   late final Image spriteImage;
+
+  String overlayMessage = '';
+  int overlayDuration = 3;
 
   @override
   FutureOr<void> onLoad() async {
@@ -109,4 +112,5 @@ class MyGame extends FlameGame
 
     return super.onLoad();
   }
+
 }

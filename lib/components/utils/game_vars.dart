@@ -29,6 +29,12 @@ class GameVars {
   static const int playerStartScore = 0;
   static const int playerStartLevel = 0;
 
+
+  // hud
+  static const double hudPositionY = 5;
+  static const double hudPlayerHealthSize = 20;
+
+
   //items
   static const String itemsDir = 'Items';
 
@@ -38,13 +44,13 @@ class GameVars {
   static const Color defaultBackgroundColorTile = Color(0xFF211F30);
   static const int changeLevelDuration = 3;
 
-
   //resolution
   static const Map<String, double> resolution = {'width': 640, 'height': 360};
 
   // sound
-  static const bool playSound = false;
-  static const double soundMusicVolumes = 1.0;
+  static const bool playSound = true;
+  static const double soundMusicVolumes = 0.7;
+  static const double soundSfxVolumes = 0.9;
 
   // joystick
   static const bool defaultShowControl = false;
@@ -52,7 +58,6 @@ class GameVars {
   // fruit
   static const String fruitsDir = 'Fruits';
   static const String fruitsImgFileExt = '.png';
-
 
   static const String trapsDir = 'Traps';
   static const String checkpointDir = 'Checkpoints';

@@ -15,6 +15,7 @@ class PauseMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     game.pauseEngine();
+    game.sound.pause();
 
     return Scaffold(
       backgroundColor: Colors.black.withAlpha(100),
@@ -29,6 +30,7 @@ class PauseMenu extends StatelessWidget {
                   // game.overlays.remove(id);
                   game.resumeEngine();
                   game.router.pop();
+                  game.sound.resume();
                 },
                 child: const Text('Resume'),
               ),
@@ -38,9 +40,12 @@ class PauseMenu extends StatelessWidget {
               width: 120,
               child: ElevatedButton(
                 onPressed: () async {
-                  game.router.pop();
+                  game.gamePlay.splashRoute();
+
+                  //game.router.pop();
                   game.resumeEngine();
-                  game.router.pushReplacementNamed('splash');
+
+
                 },
                 child: const Text('Exit'),
               ),

@@ -54,7 +54,7 @@ class Fruit extends SpriteAnimationComponent
   void collidedWithPlayer() async {
     if (!collected) {
       collected = true;
-      game.sound.play(GameSound.pickup);
+      game.sound.playSfx(GameSoundSfx.pickup);
       game.playerData.score.value += 1;
 
       animation = SpriteAnimation.fromFrameData(

@@ -31,6 +31,6 @@ class WinScreen extends Component with TapCallbacks, HasGameRef<MyGame> {
 
   @override
   void onTapUp(TapUpEvent event) {
-    game.router.pushReplacementNamed('splash');
+    game.gamePlay.splashRoute();
   }
 }

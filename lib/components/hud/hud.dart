@@ -8,11 +8,12 @@ import 'package:horsethegame/components/hud/buttons_block_hud.dart';
 import 'package:horsethegame/components/hud/level_block_hud.dart';
 import 'package:horsethegame/components/hud/health_block_hud.dart';
 import 'package:horsethegame/components/hud/score_block_hud.dart';
+import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
 class Hud extends PositionComponent with HasGameRef<MyGame> {
-  double spriteHealthSize = 20;
-  final double hudPositionY = 5;
+  final double spriteHealthSize = GameVars.hudPlayerHealthSize;
+  final double hudPositionY = GameVars.hudPositionY;
 
   late final HealthBlockHud healthBlockHud;
   late final LevelBlockHud levelBlockHud;
@@ -56,6 +57,7 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     await levelBlockHud.addLevelText();
     await scoreBlockHud.addScoreTextComponent();
     await buttonsBlockHud.addPauseImage();
+    await buttonsBlockHud.addSoundImage();
 
     game.playerData.health.addListener(onHealthChange);
     game.playerData.level.addListener(onLevelChange);

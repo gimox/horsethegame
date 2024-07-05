@@ -53,9 +53,12 @@ class SplashWorld extends World  with HasGameRef<MyGame>{
 class SplashScreen extends Component with HasGameRef<MyGame>, TapCallbacks {
   late CameraComponent cam;
 
+
+
   @override
   Future<void> onLoad() async {
     World world = SplashWorld();
+    game.sound.playBgm('menu');
 
     cam = CameraComponent.withFixedResolution(
       world: world,

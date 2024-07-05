@@ -39,4 +39,23 @@ class ButtonsBlockHud extends PositionComponent with HasGameRef<MyGame> {
 
     await add(pauseButton);
   }
+
+  Future<void> addSoundImage() async {
+    final image = game.images.fromCache('Menu/Buttons/Volume.png');
+
+    final button = SpriteButtonComponent(
+      onPressed: () => game.gamePlay.soundToggle(),
+      button: Sprite(
+        image,
+        srcSize: Vector2.all(32),
+        srcPosition: Vector2(0, 0),
+      ),
+      size: Vector2.all(32),
+      anchor: Anchor.topCenter,
+      position: Vector2(game.size.x / 2 +32, positionY),
+    );
+
+    await add(button);
+  }
+
 }

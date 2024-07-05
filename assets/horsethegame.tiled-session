@@ -47,7 +47,7 @@
         "tiles/level_01.tmx"
     ],
     "project": "horsethegame.tiled-project",
-    "property.type": "float",
+    "property.type": "string",
     "recentFiles": [
         "tiles/level_02.tmx",
         "tiles/horseTileSet.tsx",

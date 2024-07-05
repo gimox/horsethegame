@@ -8,7 +8,7 @@ import 'package:flame_audio/flame_audio.dart';
 
 import 'package:horsethegame/my_game.dart';
 
-enum GameSound {
+enum GameSoundSfx {
   jump,
   hit,
   disappear,
@@ -20,13 +20,45 @@ class AudioManager extends Component with HasGameRef<MyGame> {
 
   Future<void> init() async {
     FlameAudio.bgm.initialize();
-    await FlameAudio.audioCache
-        .loadAll(['jump.wav', 'hit.wav', 'disappear.wav', 'pickup.wav']);
+    await FlameAudio.audioCache.loadAll([
+      'jump.wav',
+      'hit.wav',
+      'disappear.wav',
+      'pickup.wav',
+      'menu.mp3',
+      'win.mp3',
+      'gameOver.mp3',
+
+    ]);
   }
 
-  void play(GameSound gameSound) {
+  void playSfx(GameSoundSfx gameSound) {
     if (game.playSounds) {
-      FlameAudio.play(gameSound.name + audioExt, volume: game.soundVolume);
+      FlameAudio.play(
+        gameSound.name + audioExt,
+        volume: game.soundSfxVolumes,
+      );
     }
+  }
+
+  void playBgm(String fileName) {
+    if (game.playSounds) {
+      FlameAudio.bgm.play(
+        '$fileName.mp3',
+        volume: game.soundMusicVolumes,
+      );
+    }
+  }
+
+  void stop() {
+   FlameAudio.bgm.stop();
+  }
+
+  void pause() {
+    FlameAudio.bgm.pause();
+  }
+
+  void resume() {
+   FlameAudio.bgm.resume();
   }
 }

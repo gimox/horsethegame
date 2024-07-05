@@ -207,7 +207,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _playerJump(double dt) {
-    game.sound.play(GameSound.jump);
+    game.sound.playSfx(GameSoundSfx.jump);
 
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;
@@ -273,7 +273,7 @@ class Player extends SpriteAnimationGroupComponent
     // remove health
     game.gamePlay.removeHealth();
 
-    game.sound.play(GameSound.hit);
+    game.sound.playSfx(GameSoundSfx.hit);
 
     const canMoveDuration = Duration(milliseconds: 400);
     gotHit = true;
@@ -299,7 +299,7 @@ class Player extends SpriteAnimationGroupComponent
   void _reachedCheckpoint() async {
     reachedCheckpoint = true;
 
-    game.sound.play(GameSound.disappear);
+    game.sound.playSfx(GameSoundSfx.disappear);
 
     if (scale.x > 0) {
       position = position - Vector2.all(playerSpriteSize);

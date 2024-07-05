@@ -10,6 +10,9 @@ import 'package:flutter/foundation.dart';
 import 'package:horsethegame/components/level.dart';
 import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
+import 'package:horsethegame/screens/game_text_overlay_screen.dart';
+
+import '../screens/sound_toggle_screen.dart';
 
 class GamePlay extends Component with HasGameRef<MyGame> {
   GamePlay();
@@ -34,7 +37,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.currentLevelIndex++;
     } else {
       // no more level
-      game.router.pushReplacementNamed('win');
+      winRoute();
     }
 
     await _loadLevel();
@@ -45,6 +48,9 @@ class GamePlay extends Component with HasGameRef<MyGame> {
 
     // needed to display level in HUD
     game.playerData.level.value = game.currentLevelIndex + 1;
+
+    game.sound.stop();
+    game.sound.playBgm('level_${game.playerData.level.value}');
 
     if (kDebugMode) {
       print('');
@@ -101,6 +107,38 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   Future<void> onGameOver() async {
+    game.gamePlay.gameOverRoute();
+  }
+
+  void soundToggle() {
+    game.overlayDuration = 2;
+    if (game.playSounds) {
+      game.overlayMessage = "Sound OFF";
+      game.playSounds = false;
+      game.sound.pause();
+    } else {
+      game.overlayMessage = "Sound ON";
+      game.playSounds = true;
+      game.sound.resume();
+    }
+    game.router.pushRoute(GameTextOverlayScreenRoute());
+  }
+
+  void splashRoute() {
+    game.sound.stop();
+    game.sound.playBgm('menu');
+    game.router.pushReplacementNamed('splash');
+  }
+
+  void gameOverRoute() {
+    game.sound.stop();
+    game.sound.playBgm('gameOver');
     game.router.pushNamed('gameOver');
+  }
+
+  void winRoute() {
+    game.sound.stop();
+    game.sound.playBgm('win');
+    game.router.pushReplacementNamed('win');
   }
 }
