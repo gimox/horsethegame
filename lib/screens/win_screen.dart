@@ -15,6 +15,7 @@ import 'package:flutter/rendering.dart';
 class WinScreen extends Component with TapCallbacks, HasGameRef<MyGame> {
   @override
   Future<void> onLoad() async {
+    game.sound.playBgm('win');
     addAll([
       BackgroundUtil(const Color(0xff282828)),
       TextBoxComponent(

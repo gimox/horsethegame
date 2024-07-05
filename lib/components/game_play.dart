@@ -38,6 +38,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     } else {
       // no more level
       winRoute();
+      return;
     }
 
     await _loadLevel();
