@@ -22,6 +22,8 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
   await windowManager.ensureInitialized();
