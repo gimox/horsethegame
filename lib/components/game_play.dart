@@ -12,8 +12,6 @@ import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 import 'package:horsethegame/screens/game_text_overlay_screen.dart';
 
-import '../screens/sound_toggle_screen.dart';
-
 class GamePlay extends Component with HasGameRef<MyGame> {
   GamePlay();
 
@@ -112,7 +110,6 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   void soundToggle() {
-
     // fix route error, enable button only if route is  not null
     // when overlay route display: name== null,
     String? routeName = game.router.currentRoute.name;
@@ -120,7 +117,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       return;
     }
 
-    game.overlayDuration = 2;
+    game.overlayDuration = 1;
     if (game.playSounds) {
       game.overlayMessage = "Sound OFF";
       game.playSounds = false;
@@ -130,7 +127,6 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.playSounds = true;
       game.sound.resume();
     }
-
 
     game.router.pushRoute(GameTextOverlayScreenRoute());
   }
