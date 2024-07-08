@@ -29,7 +29,7 @@ enum PlayerState {
 }
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<MyGame>, KeyboardHandler, CollisionCallbacks {
+    with HasGameRef<MyGame>, CollisionCallbacks {
   String character;
 
   Player({super.position, this.character = "Ninja Frog"});
@@ -99,21 +99,16 @@ class Player extends SpriteAnimationGroupComponent
     super.update(dt);
   }
 
-  @override
-  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  resetMovement() {
     horizontalMovement = 0;
+  }
 
-    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowRight);
+  moveLeft() {
+    horizontalMovement += -1;
+  }
 
-    horizontalMovement += isLeftKeyPressed ? -1 : 0;
-    horizontalMovement += isRightKeyPressed ? 1 : 0;
-
-    hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
-
-    return super.onKeyEvent(event, keysPressed);
+  moveRight() {
+    horizontalMovement += 1;
   }
 
   @override

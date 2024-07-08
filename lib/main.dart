@@ -2,6 +2,10 @@
  * Copyright (c) 2024.
  * Giorgio Modoni <modogio@gmail.com>
  */
+/*
+ * Copyright (c) 2024.
+ * Giorgio Modoni <modogio@gmail.com>
+ */
 
 import 'dart:io';
 

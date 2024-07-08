@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Giorgio Modoni <modogio@gmail.com>
+ */
+
 import 'dart:async';
 import 'dart:io';
 
@@ -63,15 +68,16 @@ class Joystick extends Component with HasGameRef<MyGame>, TapCallbacks {
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
-        game.player.horizontalMovement = -1;
+        game.player.moveLeft();
+
         break;
       case JoystickDirection.right:
       case JoystickDirection.upRight:
       case JoystickDirection.downRight:
-        game.player.horizontalMovement = 1;
+        game.player.moveRight();
         break;
       default:
-        game.player.horizontalMovement = 0;
+        game.player.resetMovement();
         //idle
         break;
     }

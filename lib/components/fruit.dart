@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Giorgio Modoni <modogio@gmail.com>
+ */
+
 import 'dart:async';
 
 import 'package:flame/collisions.dart';

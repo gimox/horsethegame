@@ -4,13 +4,14 @@
  */
 
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/game_router.dart';
 import 'package:horsethegame/components/player_data.dart';
@@ -22,11 +23,7 @@ import 'components/level.dart';
 import 'components/player.dart';
 
 class MyGame extends FlameGame
-    with
-        HasKeyboardHandlerComponents,
-        DragCallbacks,
-        HasCollisionDetection,
-        TapCallbacks {
+    with DragCallbacks, HasCollisionDetection, KeyboardEvents, TapCallbacks {
   @override
   Color backgroundColor() => GameVars.defaultBackgroundColorTile;
 
@@ -113,4 +110,28 @@ class MyGame extends FlameGame
     return super.onLoad();
   }
 
+  @override
+  KeyEventResult onKeyEvent(
+      KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    player.resetMovement();
+
+    if (keysPressed.contains(LogicalKeyboardKey.space) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
+      player.hasJumped = true;
+    } else {
+      player.hasJumped = false;
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.keyA) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+      player.moveLeft();
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.keyD) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+      player.moveRight();
+    }
+
+    return KeyEventResult.handled;
+  }
 }

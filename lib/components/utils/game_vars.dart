@@ -40,7 +40,7 @@ class GameVars {
 
   // levels
   static const int startLevelIndex = 0;
-  static const List<String> levelNames = ['level_01', 'level_02'];
+  static const List<String> levelNames = ['level_01', 'level_01'];
   static const Color defaultBackgroundColorTile = Color(0xFF211F30);
   static const int changeLevelDuration = 3;
 
@@ -48,7 +48,7 @@ class GameVars {
   static const Map<String, double> resolution = {'width': 640, 'height': 360};
 
   // sound
-  static const bool playSound = true;
+  static const bool playSound = false;
   static const double soundMusicVolumes = 0.7;
   static const double soundSfxVolumes = 0.9;
 

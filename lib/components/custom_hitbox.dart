@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ * Giorgio Modoni <modogio@gmail.com>
+ */
+
 class CustomHitbox {
   final double offsetX;
   final double offsetY;
