@@ -17,6 +17,7 @@ enum GameSoundSfx {
 
 class AudioManager extends Component with HasGameRef<MyGame> {
   static const String audioExt = '.wav';
+  bool isPlayBsm = false;
 
   Future<void> init() async {
     FlameAudio.bgm.initialize();
@@ -42,6 +43,7 @@ class AudioManager extends Component with HasGameRef<MyGame> {
 
   void playBgm(String fileName) {
     if (game.playSounds) {
+      isPlayBsm = true;
       FlameAudio.bgm.play(
         '$fileName.mp3',
         volume: game.soundMusicVolumes,
@@ -50,7 +52,7 @@ class AudioManager extends Component with HasGameRef<MyGame> {
   }
 
   void stop() {
-   FlameAudio.bgm.stop();
+    FlameAudio.bgm.stop();
   }
 
   void pause() {
@@ -58,6 +60,6 @@ class AudioManager extends Component with HasGameRef<MyGame> {
   }
 
   void resume() {
-   FlameAudio.bgm.resume();
+    FlameAudio.bgm.resume();
   }
 }

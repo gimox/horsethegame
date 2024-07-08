@@ -143,7 +143,11 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     } else {
       game.overlayMessage = "Sound ON";
       game.playSounds = true;
-      game.sound.resume();
+      if (!game.sound.isPlayBsm) {
+        game.sound.playBgm('level_${game.playerData.level.value}');
+      } else {
+        game.sound.resume();
+      }
     }
 
     game.router.pushRoute(GameTextOverlayScreenRoute());
