@@ -22,7 +22,6 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
 
   Hud({super.children, super.priority});
 
-
   @override
   Future<void> onLoad() async {
     healthBlockHud = HealthBlockHud(
@@ -65,8 +64,7 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
   }
 
   void onScoreChange() {
-    scoreBlockHud.scoreTextComponent.text =
-        'Score: ${game.playerData.score.value}';
+    scoreBlockHud.scoreTextComponent.text = '${game.playerData.score.value}';
   }
 
   void onHealthChange() {

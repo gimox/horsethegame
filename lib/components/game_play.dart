@@ -62,7 +62,10 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       print('-------------------------------------------------\n');
     }
 
-    await Future.delayed(const Duration(seconds: 1), () async {
+    const Duration startLevelDuration =
+        Duration(milliseconds: GameVars.startLevelMilliseconds);
+
+    await Future.delayed(startLevelDuration, () async {
       game.worldGameLevel = Level(
         player: game.player,
         levelName: game.levelNames[game.currentLevelIndex],
@@ -79,6 +82,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.cam.priority = 1;
 
       await addAll([game.cam, game.worldGameLevel]);
+      startLevelMessageRoute();
     });
   }
 
@@ -100,9 +104,23 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   Future<void> onChangeLevel() async {
+    levelCompletedMessageRoute();
+
     const waitToChangeDuration =
         Duration(seconds: GameVars.changeLevelDuration);
     await Future.delayed(waitToChangeDuration, () => loadNextLevel());
+  }
+
+  void levelCompletedMessageRoute() {
+    game.overlayDuration = GameVars.changeLevelDuration;
+    game.overlayMessage = "LEVEL COMPLETED";
+    game.router.pushRoute(GameTextOverlayScreenRoute());
+  }
+
+  void startLevelMessageRoute() {
+    game.overlayDuration = GameVars.startLevelOverlayDuration;
+    game.overlayMessage = "LEVEL ${game.playerData.level.value}";
+    game.router.pushRoute(GameTextOverlayScreenRoute());
   }
 
   Future<void> onGameOver() async {
@@ -117,7 +135,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       return;
     }
 
-    game.overlayDuration = 1;
+    game.overlayDuration = GameVars.soundOverlayDuration;
     if (game.playSounds) {
       game.overlayMessage = "Sound OFF";
       game.playSounds = false;

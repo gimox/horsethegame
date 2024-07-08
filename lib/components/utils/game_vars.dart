@@ -33,6 +33,7 @@ class GameVars {
   // hud
   static const double hudPositionY = 5;
   static const double hudPlayerHealthSize = 20;
+  static const String hudFruitsItem= 'Cherries.png';
 
 
   //items
@@ -43,6 +44,10 @@ class GameVars {
   static const List<String> levelNames = ['level_01', 'level_01'];
   static const Color defaultBackgroundColorTile = Color(0xFF211F30);
   static const int changeLevelDuration = 3;
+  static const int startLevelMilliseconds = 50;
+
+  static const int soundOverlayDuration = 1;
+  static const int startLevelOverlayDuration = 1;
 
   //resolution
   static const Map<String, double> resolution = {'width': 640, 'height': 360};
