@@ -53,13 +53,11 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     );
     add(scoreBlockHud);
 
-
     timerBlockHud = TimerBlockHud(
       priority: 1,
       positionY: hudPositionY,
     );
     add(timerBlockHud);
-
 
     await healthBlockHud.addHealthTextComponent();
     await healthBlockHud.addSpriteHealth();
@@ -68,8 +66,6 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     await buttonsBlockHud.addPauseImage();
     await buttonsBlockHud.addSoundImage();
     await timerBlockHud.addTimer();
-
-
 
     game.playerData.health.addListener(onHealthChange);
     game.playerData.level.addListener(onLevelChange);
@@ -81,22 +77,24 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     scoreBlockHud.scoreTextComponent.text = '${game.playerData.score.value}';
   }
 
-  void onHealthChange() {
+  void onHealthChange() async {
     healthBlockHud.healthTextComponent.text =
         'x${game.playerData.health.value}';
 
-    healthBlockHud.updateSpriteHealth();
-
-    if (game.playerData.health.value == 0) {
-      game.gamePlay.onGameOver();
-    }
+    await healthBlockHud.updateSpriteHealth();
   }
 
   void onLevelChange() {
     levelBlockHud.replaceLevelImage();
   }
 
-  void onTimerChange(){
-    timerBlockHud.timerTextComponent.text = 'TIME: ${game.gameTimer.countDownTime.value.toString()}';
+  void onTimerChange() {
+    late String prefix =
+        game.gameTimer.countDownTime.value < GameVars.hurryUpStartTime
+            ? 'HURRY UP:'
+            : 'TIME:';
+
+    timerBlockHud.timerTextComponent.text =
+        '$prefix ${game.gameTimer.countDownTime.value.toString()}';
   }
 }

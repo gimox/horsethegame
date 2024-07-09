@@ -49,11 +49,14 @@ class GameVars {
   static const int soundOverlayDuration = 1;
   static const int startLevelOverlayDuration = 1;
 
+
+  static const int hurryUpStartTime = 10;
+
   //resolution
   static const Map<String, double> resolution = {'width': 640, 'height': 360};
 
   // sound
-  static const bool playSound = false;
+  static const bool playSound = true;
   static const double soundMusicVolumes = 0.7;
   static const double soundSfxVolumes = 0.9;
 

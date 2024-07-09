@@ -77,7 +77,7 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
     return;
   }
 
-  void updateSpriteHealth() {
+  Future<void> updateSpriteHealth() async {
     if (spriteHealthList.length > game.playerData.health.value) {
       // remove
       if (kDebugMode) {
@@ -98,24 +98,30 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
       }
       removeAll(spriteHealthList);
       spriteHealthList.clear();
-      addSpriteHealth();
+
+      await addSpriteHealth();
     }
   }
 
   void _blinkSpriteHealth() {
+
     if (kDebugMode) {
       print('-> add blink effect to sprite health');
     }
-    SpriteComponent newSprite = spriteHealthList.last;
+    if(spriteHealthList.isNotEmpty) {
+      SpriteComponent newSprite = spriteHealthList.last;
 
-    spriteHealthList.last.removeFromParent();
+      newSprite.add(
+        OpacityEffect.to(
+          0.2,
+          EffectController(duration: 0.75, infinite: true),
+        ),
+      );
 
-    newSprite.add(
-      OpacityEffect.to(
-        0.2,
-        EffectController(duration: 0.75, infinite: true),
-      ),
-    );
-    add(newSprite);
+      spriteHealthList.last.removeFromParent();
+      add(newSprite);
+    }
+
+
   }
 }

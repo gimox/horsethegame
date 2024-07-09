@@ -44,7 +44,7 @@ class ButtonsBlockHud extends PositionComponent with HasGameRef<MyGame> {
     final image = game.images.fromCache('Menu/Buttons/Volume.png');
 
     final button = SpriteButtonComponent(
-      onPressed: () => game.gamePlay.soundToggle(),
+      onPressed: () => game.gamePlay.soundToggleRoute(),
       button: Sprite(
         image,
         srcSize: Vector2.all(32),

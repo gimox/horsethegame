@@ -29,6 +29,8 @@ class AudioManager extends Component with HasGameRef<MyGame> {
       'menu.mp3',
       'win.mp3',
       'gameOver.mp3',
+      'hurryup.mp3',
+      'victorious.mp3',
     ]);
   }
 

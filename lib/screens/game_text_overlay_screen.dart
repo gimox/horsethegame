@@ -32,23 +32,23 @@ class GameTextOverlayScreenRoute extends Route {
 }
 
 class GameTextOverlayScreen extends Component with HasGameReference<MyGame> {
-
   @override
   void onMount() async {
-   await  Future.delayed(Duration(seconds: game.overlayDuration), () {
-
-     // avoid router pop on other route | need more debug!
-     if(game.router.currentRoute.name == null) {
-       game.router.pop();
-     }
-
-    });
+    await Future.delayed(
+      Duration(seconds: game.overlayDuration),
+      () {
+        // avoid router pop on other route | need more debug!
+        if (game.router.currentRoute.name == null) {
+          game.router.pop();
+        }
+      },
+    );
     super.onMount();
   }
 
   @override
   Future<void> onLoad() async {
-     // final game = findGame()!;
+    // final game = findGame()!;
 
     await addAll([
       TextComponent(

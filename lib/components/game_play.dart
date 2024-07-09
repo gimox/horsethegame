@@ -91,7 +91,11 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   @override
   FutureOr<void> onLoad() {
     game.gameTimer.countDownTime.addListener(_onTimerChange);
-    print("OJN LOAD");
+    if (kDebugMode) {
+      print("* countDOWN listener added");
+    }
+
+    game.playerData.health.addListener(onHealthChange);
 
     return super.onLoad();
   }
@@ -106,23 +110,32 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   void setCountdownTimeFromTile() {
-   /*
+    game.gameTimer.interval.start();
+
     final backgroundLayer = game.gameLevel.level.tileMap.getLayer('Background');
     if (backgroundLayer != null) {
       game.gameTimer.countDownTime.value =
           backgroundLayer.properties.getValue('CountdownTimer');
     }
 
-    */
-    game.gameTimer.countDownTime.value = 5;
+    // game.gameTimer.countDownTime.value = 20;
   }
 
-  _onTimerChange(){
-    if(game.gameTimer.countDownTime.value ==0){
-    // game.player.respawn();
-     setCountdownTimeFromTile();
-
+  _onTimerChange() {
+    if (game.gameTimer.countDownTime.value == GameVars.hurryUpStartTime) {
+      game.sound.playBgm('hurryup');
     }
+
+    if (game.gameTimer.countDownTime.value == 0) {
+      setCountdownTimeFromTile();
+      game.player.respawn();
+    }
+  }
+
+  void onRespawn() {
+    setCountdownTimeFromTile();
+    game.sound.stop();
+    game.sound.playBgm('level_${game.playerData.level.value}');
   }
 
   void removeHealth() {
@@ -133,12 +146,24 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     }
   }
 
+  Future<void> onHealthChange() async {
+    if (game.playerData.health.value == 0) {
+      onGameOver();
+    }
+  }
+
   Future<void> onChangeLevel() async {
     levelCompletedMessageRoute();
 
     const waitToChangeDuration =
         Duration(seconds: GameVars.changeLevelDuration);
     await Future.delayed(waitToChangeDuration, () => loadNextLevel());
+  }
+
+  void onCheckPoint() {
+    game.gameTimer.interval.stop();
+    game.sound.stop();
+    game.sound.playBgm('victorious');
   }
 
   void levelCompletedMessageRoute() {
@@ -154,10 +179,14 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   Future<void> onGameOver() async {
+    game.gameTimer.interval.stop();
+    game.sound.stop();
+
+    game.sound.playBgm('gameOver');
     game.gamePlay.gameOverRoute();
   }
 
-  void soundToggle() {
+  void soundToggleRoute() {
     // fix route error, enable button only if route is  not null
     // when overlay route display: name== null,
     String? routeName = game.router.currentRoute.name;
@@ -184,19 +213,20 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   void splashRoute() {
+    game.gameTimer.interval.stop();
     game.sound.stop();
     game.sound.playBgm('menu');
     game.router.pushReplacementNamed('splash');
   }
 
   void gameOverRoute() {
-    game.sound.stop();
-    game.sound.playBgm('gameOver');
     game.router.pushNamed('gameOver');
   }
 
   void winRoute() {
+    game.gameTimer.interval.stop();
     game.sound.stop();
+
     game.sound.playBgm('win');
     game.router.pushReplacementNamed('win');
   }

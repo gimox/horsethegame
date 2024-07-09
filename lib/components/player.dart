@@ -7,7 +7,6 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/services.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/checkpoint.dart';
 import 'package:horsethegame/components/collision_block.dart';
@@ -295,6 +294,7 @@ class Player extends SpriteAnimationGroupComponent
 
   void _reachedCheckpoint() async {
     reachedCheckpoint = true;
+    game.gamePlay.onCheckPoint();
 
     game.sound.playSfx(GameSoundSfx.disappear);
 

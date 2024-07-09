@@ -13,7 +13,6 @@ class GameTimer extends Component with HasGameRef<MyGame> {
   GameTimer({super.priority, super.children});
 
   late Timer interval;
-
   late ValueNotifier<int> countDownTime;
 
   @override
@@ -25,7 +24,7 @@ class GameTimer extends Component with HasGameRef<MyGame> {
   @override
   void update(double dt) {
     interval.update(dt);
-   /*
+    /*
     if (kDebugMode) {
         print('* game timer: ${countDownTime.value}');
     }
@@ -39,7 +38,9 @@ class GameTimer extends Component with HasGameRef<MyGame> {
 
     interval = Timer(
       1,
-      onTick: () => countDownTime.value > 0 ? countDownTime.value -= 1 : 0,
+      onTick: () {
+        if (countDownTime.value > 0) countDownTime.value -= 1;
+      },
       repeat: true,
     );
   }
