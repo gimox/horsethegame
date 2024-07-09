@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/game_router.dart';
+import 'package:horsethegame/components/game_timer.dart';
 import 'package:horsethegame/components/player_data.dart';
 import 'package:horsethegame/components/game_play.dart';
 import 'components/utils/game_vars.dart';
@@ -62,17 +63,27 @@ class MyGame extends FlameGame
   // add routing
   late final RouterComponent router;
 
-  late Level worldGameLevel;
+  late Level gameLevel;
   late final Image spriteImage;
 
   String overlayMessage = '';
   int overlayDuration = 3;
+
+
+  late final GameTimer gameTimer;
+
+
 
   @override
   FutureOr<void> onLoad() async {
     if (kDebugMode) {
       print("* onLoad my_game call");
     }
+
+    gameTimer = GameTimer();
+    add(gameTimer);
+    gameTimer.loadTimer();
+
 
     // load all image into cache
     await images.loadAllImages();

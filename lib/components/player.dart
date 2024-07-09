@@ -104,11 +104,13 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   moveLeft() {
-    horizontalMovement += -1;
+  //  horizontalMovement += -1;
+    horizontalMovement = -1;
   }
 
   moveRight() {
-    horizontalMovement += 1;
+    //horizontalMovement += 1;
+    horizontalMovement = 1;
   }
 
   @override
@@ -116,7 +118,7 @@ class Player extends SpriteAnimationGroupComponent
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (!reachedCheckpoint) {
       if (other is Fruit) other.collidedWithPlayer();
-      if (other is Saw) _respawn();
+      if (other is Saw) respawn();
       if (other is Checkpoint) _reachedCheckpoint();
     }
     super.onCollisionStart(intersectionPoints, other);
@@ -264,7 +266,7 @@ class Player extends SpriteAnimationGroupComponent
     }
   }
 
-  void _respawn() async {
+  void respawn() async {
     // remove health
     game.gamePlay.removeHealth();
 

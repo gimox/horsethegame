@@ -66,13 +66,13 @@ class GamePlay extends Component with HasGameRef<MyGame> {
         Duration(milliseconds: GameVars.startLevelMilliseconds);
 
     await Future.delayed(startLevelDuration, () async {
-      game.worldGameLevel = Level(
+      game.gameLevel = Level(
         player: game.player,
         levelName: game.levelNames[game.currentLevelIndex],
       );
 
       game.cam = CameraComponent.withFixedResolution(
-        world: game.worldGameLevel,
+        world: game.gameLevel,
         width: game.fixedResolution.x,
         height: game.fixedResolution.y,
         hudComponents: game.hudComponents,
@@ -81,9 +81,19 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.cam.viewfinder.anchor = Anchor.topLeft;
       game.cam.priority = 1;
 
-      await addAll([game.cam, game.worldGameLevel]);
+      await addAll([game.cam, game.gameLevel]);
+
+      setCountdownTimeFromTile();
       startLevelMessageRoute();
     });
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    game.gameTimer.countDownTime.addListener(_onTimerChange);
+    print("OJN LOAD");
+
+    return super.onLoad();
   }
 
   void _initGame() {
@@ -93,6 +103,26 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     game.playerData.health.value = game.playerData.startHealth;
     game.playerData.score.value = game.playerData.startScore;
     game.playerData.level.value = game.playerData.startLevel;
+  }
+
+  void setCountdownTimeFromTile() {
+   /*
+    final backgroundLayer = game.gameLevel.level.tileMap.getLayer('Background');
+    if (backgroundLayer != null) {
+      game.gameTimer.countDownTime.value =
+          backgroundLayer.properties.getValue('CountdownTimer');
+    }
+
+    */
+    game.gameTimer.countDownTime.value = 5;
+  }
+
+  _onTimerChange(){
+    if(game.gameTimer.countDownTime.value ==0){
+    // game.player.respawn();
+     setCountdownTimeFromTile();
+
+    }
   }
 
   void removeHealth() {

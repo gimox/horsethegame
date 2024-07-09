@@ -87,7 +87,7 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
       spriteHealthList.removeLast();
 
       if (kDebugMode) {
-        print('-> ${spriteHealthList.length}');
+        print('-> health value ${spriteHealthList.length}');
       }
       if (spriteHealthList.length == 1) _blinkSpriteHealth();
     } else {

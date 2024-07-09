@@ -8,6 +8,7 @@ import 'package:horsethegame/components/hud/buttons_block_hud.dart';
 import 'package:horsethegame/components/hud/level_block_hud.dart';
 import 'package:horsethegame/components/hud/health_block_hud.dart';
 import 'package:horsethegame/components/hud/score_block_hud.dart';
+import 'package:horsethegame/components/hud/timer_block_hud.dart';
 import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 
@@ -19,6 +20,7 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
   late final LevelBlockHud levelBlockHud;
   late final ButtonsBlockHud buttonsBlockHud;
   late final ScoreBlockHud scoreBlockHud;
+  late final TimerBlockHud timerBlockHud;
 
   Hud({super.children, super.priority});
 
@@ -51,16 +53,28 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     );
     add(scoreBlockHud);
 
+
+    timerBlockHud = TimerBlockHud(
+      priority: 1,
+      positionY: hudPositionY,
+    );
+    add(timerBlockHud);
+
+
     await healthBlockHud.addHealthTextComponent();
     await healthBlockHud.addSpriteHealth();
     await levelBlockHud.addLevelText();
     await scoreBlockHud.addScoreTextComponent();
     await buttonsBlockHud.addPauseImage();
     await buttonsBlockHud.addSoundImage();
+    await timerBlockHud.addTimer();
+
+
 
     game.playerData.health.addListener(onHealthChange);
     game.playerData.level.addListener(onLevelChange);
     game.playerData.score.addListener(onScoreChange);
+    game.gameTimer.countDownTime.addListener(onTimerChange);
   }
 
   void onScoreChange() {
@@ -80,5 +94,9 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
 
   void onLevelChange() {
     levelBlockHud.replaceLevelImage();
+  }
+
+  void onTimerChange(){
+    timerBlockHud.timerTextComponent.text = 'TIME: ${game.gameTimer.countDownTime.value.toString()}';
   }
 }

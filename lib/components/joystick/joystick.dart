@@ -69,15 +69,17 @@ class Joystick extends Component with HasGameRef<MyGame>, TapCallbacks {
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
         game.player.moveLeft();
-
+        game.player.horizontalMovement = -1;
         break;
       case JoystickDirection.right:
       case JoystickDirection.upRight:
       case JoystickDirection.downRight:
-        game.player.moveRight();
+      //  game.player.moveRight();
+        game.player.horizontalMovement = 1;
         break;
       default:
-        game.player.resetMovement();
+       // game.player.resetMovement();
+        game.player.horizontalMovement = 0;
         //idle
         break;
     }
