@@ -54,14 +54,17 @@ class AudioManager extends Component with HasGameRef<MyGame> {
   }
 
   void stop() {
+    isPlayBsm = false;
     FlameAudio.bgm.stop();
   }
 
   void pause() {
+    isPlayBsm = false;
     FlameAudio.bgm.pause();
   }
 
   void resume() {
+    isPlayBsm = true;
     FlameAudio.bgm.resume();
   }
 }

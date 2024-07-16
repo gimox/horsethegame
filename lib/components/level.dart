@@ -127,4 +127,15 @@ class Level extends World with HasGameRef<MyGame> {
 
     player.collisionBlocks = collisionBlocks;
   }
+
+
+  int? getPropertyString(String property) {
+    final backgroundLayer = game.gameLevel.level.tileMap.getLayer('Background');
+
+    if (backgroundLayer != null) {
+      return backgroundLayer.properties.getValue('CountdownTimer');
+    }
+
+    return null;
+  }
 }

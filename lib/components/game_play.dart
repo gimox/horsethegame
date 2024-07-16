@@ -12,14 +12,26 @@ import 'package:horsethegame/components/utils/game_vars.dart';
 import 'package:horsethegame/my_game.dart';
 import 'package:horsethegame/screens/game_text_overlay_screen.dart';
 
-class GamePlay extends Component with HasGameRef<MyGame> {
+class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
   GamePlay();
+
+  @override
+  FutureOr<void> onLoad() {
+    game.gameTimer.countDownTime.addListener(_onTimerChange);
+    game.playerData.health.addListener(onHealthChange);
+
+    if (kDebugMode) print("* gamePlay onLoad called");
+
+    return super.onLoad();
+  }
 
   // call this to only on start game
   FutureOr<void> startGame() async {
     if (kDebugMode) {
-      print('* startGame call');
+      print('* gamePlay startGame call');
     }
+
+    game.gameState = GameState.startingGame;
 
     removeWhere((component) => component is Level);
     _initGame();
@@ -43,13 +55,9 @@ class GamePlay extends Component with HasGameRef<MyGame> {
   }
 
   FutureOr<void> _loadLevel() async {
-    //   if (game.currentLevelIndex == 0) _initGame();
-
-    // needed to display level in HUD
     game.playerData.level.value = game.currentLevelIndex + 1;
 
-    game.sound.stop();
-    game.sound.playBgm('level_${game.playerData.level.value}');
+    _playLevelSong();
 
     if (kDebugMode) {
       print('');
@@ -81,27 +89,20 @@ class GamePlay extends Component with HasGameRef<MyGame> {
       game.cam.viewfinder.anchor = Anchor.topLeft;
       game.cam.priority = 1;
 
-      await addAll([game.cam, game.gameLevel]);
+      await addAll([
+        game.cam,
+        game.gameLevel,
+      ]);
 
+      // reset timer
       setCountdownTimeFromTile();
+      // display start level message
       startLevelMessageRoute();
     });
   }
 
-  @override
-  FutureOr<void> onLoad() {
-    game.gameTimer.countDownTime.addListener(_onTimerChange);
-    if (kDebugMode) {
-      print("* countDOWN listener added");
-    }
-
-    game.playerData.health.addListener(onHealthChange);
-
-    return super.onLoad();
-  }
-
   void _initGame() {
-    if (kDebugMode) print('* _initGame call');
+    if (kDebugMode) print('* gamePlay _initGame call');
 
     game.currentLevelIndex = 0;
     game.playerData.health.value = game.playerData.startHealth;
@@ -109,15 +110,15 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     game.playerData.level.value = game.playerData.startLevel;
   }
 
+  void _playLevelSong() {
+    if (game.sound.isPlayBsm) game.sound.stop();
+    game.sound.playBgm('level_${game.playerData.level.value}');
+  }
+
   void setCountdownTimeFromTile() {
     game.gameTimer.interval.start();
-
-    final backgroundLayer = game.gameLevel.level.tileMap.getLayer('Background');
-    if (backgroundLayer != null) {
-      game.gameTimer.countDownTime.value =
-          backgroundLayer.properties.getValue('CountdownTimer');
-    }
-
+    game.gameTimer.countDownTime.value =
+        game.gameLevel.getPropertyString('CountdownTimer')!;
     // game.gameTimer.countDownTime.value = 20;
   }
 
@@ -134,13 +135,13 @@ class GamePlay extends Component with HasGameRef<MyGame> {
 
   void onRespawn() {
     setCountdownTimeFromTile();
-    game.sound.stop();
-    game.sound.playBgm('level_${game.playerData.level.value}');
+    _playLevelSong();
   }
 
   void removeHealth() {
     if (game.playerData.health.value > 0) {
       game.playerData.health.value -= 1;
+      game.gameState = GameState.removeHealth;
     } else {
       game.playerData.health.value = 0;
     }
@@ -190,9 +191,7 @@ class GamePlay extends Component with HasGameRef<MyGame> {
     // fix route error, enable button only if route is  not null
     // when overlay route display: name== null,
     String? routeName = game.router.currentRoute.name;
-    if (routeName == null) {
-      return;
-    }
+    if (routeName == null) return;
 
     game.overlayDuration = GameVars.soundOverlayDuration;
     if (game.playSounds) {

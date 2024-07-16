@@ -4,6 +4,7 @@
  */
 
 import 'package:flame/components.dart';
+import 'package:horsethegame/app/game_theme.dart';
 import 'package:horsethegame/components/hud/buttons_block_hud.dart';
 import 'package:horsethegame/components/hud/level_block_hud.dart';
 import 'package:horsethegame/components/hud/health_block_hud.dart';
@@ -70,7 +71,6 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     game.playerData.health.addListener(onHealthChange);
     game.playerData.level.addListener(onLevelChange);
     game.playerData.score.addListener(onScoreChange);
-    game.gameTimer.countDownTime.addListener(onTimerChange);
   }
 
   void onScoreChange() {
@@ -88,13 +88,4 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     levelBlockHud.replaceLevelImage();
   }
 
-  void onTimerChange() {
-    late String prefix =
-        game.gameTimer.countDownTime.value < GameVars.hurryUpStartTime
-            ? 'HURRY UP:'
-            : 'TIME:';
-
-    timerBlockHud.timerTextComponent.text =
-        '$prefix ${game.gameTimer.countDownTime.value.toString()}';
-  }
 }

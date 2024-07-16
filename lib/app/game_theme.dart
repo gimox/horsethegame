@@ -4,10 +4,15 @@
  */
 
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final regular = TextPaint(
   style: GoogleFonts.pixelifySans(fontSize: 18),
+);
+
+final regularRed = TextPaint(
+  style: GoogleFonts.pixelifySans(fontSize: 18,color: Colors.red),
 );
 
 final small = TextPaint(

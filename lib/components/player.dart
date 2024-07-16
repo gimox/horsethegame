@@ -7,6 +7,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/checkpoint.dart';
 import 'package:horsethegame/components/collision_block.dart';
@@ -47,6 +48,8 @@ class Player extends SpriteAnimationGroupComponent
   final double _terminalVelocity = GameVars.terminalVelocity;
   final double moveSpeed = GameVars.moveSpeed;
   final double playerSpriteSize = GameVars.playerSpriteSize;
+
+
 
   double horizontalMovement = 0;
   Vector2 startingPosition = Vector2.zero();

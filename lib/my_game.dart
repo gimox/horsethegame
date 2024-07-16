@@ -23,6 +23,14 @@ import 'components/joystick/joystick.dart';
 import 'components/level.dart';
 import 'components/player.dart';
 
+enum GameState {
+  idle,
+  loading,
+  startingGame,
+  start,
+  removeHealth,
+}
+
 class MyGame extends FlameGame
     with DragCallbacks, HasCollisionDetection, KeyboardEvents, TapCallbacks {
   @override
@@ -72,13 +80,18 @@ class MyGame extends FlameGame
 
   late final GameTimer gameTimer;
 
-
+  late GameState gameState;
+  late ValueNotifier<GameState> gameStateNotifier;
 
   @override
   FutureOr<void> onLoad() async {
     if (kDebugMode) {
-      print("* onLoad my_game call");
+      print("* myGame onLoad called");
     }
+
+    // game event
+    gameState = GameState.idle;
+    gameStateNotifier = ValueNotifier<GameState>(gameState);
 
     gameTimer = GameTimer();
     add(gameTimer);
