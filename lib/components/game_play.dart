@@ -18,11 +18,35 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
   @override
   FutureOr<void> onLoad() {
     game.gameTimer.countDownTime.addListener(_onTimerChange);
-    game.playerData.health.addListener(onHealthChange);
+    game.playerData.health.addListener(_onHealthChange);
+    game.gameState.addListener(_onGameState);
 
     if (kDebugMode) print("* gamePlay onLoad called");
 
     return super.onLoad();
+  }
+
+  void _onGameState() {
+    switch (game.gameState.value) {
+      case GameState.reachedCheckpoint:
+        _onCheckPoint();
+        break;
+
+      case GameState.respawn:
+        _onRespawn();
+        break;
+
+      case GameState.gameOver:
+        _onGameOver();
+        break;
+
+      case GameState.win:
+        _onWin();
+        break;
+
+      default:
+        break;
+    }
   }
 
   // call this to only on start game
@@ -31,12 +55,21 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
       print('* gamePlay startGame call');
     }
 
-    game.gameState = GameState.startingGame;
+    game.gameState.value = GameState.startGame;
 
     removeWhere((component) => component is Level);
     _initGame();
 
     await _loadLevel();
+  }
+
+  void _initGame() {
+    if (kDebugMode) print('* gamePlay _initGame call');
+
+    game.currentLevelIndex = 0;
+    game.playerData.health.value = game.playerData.startHealth;
+    game.playerData.score.value = game.playerData.startScore;
+    game.playerData.level.value = game.playerData.startLevel;
   }
 
   // call to change level
@@ -46,8 +79,8 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
     if (game.currentLevelIndex < game.levelNames.length - 1) {
       game.currentLevelIndex++;
     } else {
-      // no more level
-      winRoute();
+      // no more level = win
+      game.gameState.value = GameState.win;
       return;
     }
 
@@ -95,96 +128,102 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
       ]);
 
       // reset timer
-      setCountdownTimeFromTile();
+      _setCountdownTimeFromTile();
       // display start level message
-      startLevelMessageRoute();
+      _startLevelMessageRoute();
     });
   }
 
-  void _initGame() {
-    if (kDebugMode) print('* gamePlay _initGame call');
+  // set game countdown to initial value
+  void _setCountdownTimeFromTile() {
+    game.gameState.value = GameState.resetTime;
 
-    game.currentLevelIndex = 0;
-    game.playerData.health.value = game.playerData.startHealth;
-    game.playerData.score.value = game.playerData.startScore;
-    game.playerData.level.value = game.playerData.startLevel;
+    game.gameTimer.interval.start();
+    game.gameTimer.countDownTime.value =
+        game.gameLevel.getPropertyString('CountdownTimer')!;
   }
 
+  // display message for level
+  void _startLevelMessageRoute() {
+    game.overlayDuration = GameVars.startLevelOverlayDuration;
+    game.overlayMessage = "LEVEL ${game.playerData.level.value}";
+    game.router.pushRoute(GameTextOverlayScreenRoute());
+  }
+
+  // play song for level
   void _playLevelSong() {
     if (game.sound.isPlayBsm) game.sound.stop();
     game.sound.playBgm('level_${game.playerData.level.value}');
   }
 
-  void setCountdownTimeFromTile() {
-    game.gameTimer.interval.start();
-    game.gameTimer.countDownTime.value =
-        game.gameLevel.getPropertyString('CountdownTimer')!;
-    // game.gameTimer.countDownTime.value = 20;
-  }
-
+  // event on game timer
   _onTimerChange() {
+    // hurry up!
     if (game.gameTimer.countDownTime.value == GameVars.hurryUpStartTime) {
+      game.gameState.value = GameState.hurryUpTime;
       game.sound.playBgm('hurryup');
     }
 
+    // timers is over
     if (game.gameTimer.countDownTime.value == 0) {
-      setCountdownTimeFromTile();
+      _setCountdownTimeFromTile();
       game.player.respawn();
     }
   }
 
-  void onRespawn() {
-    setCountdownTimeFromTile();
-    _playLevelSong();
-  }
-
-  void removeHealth() {
-    if (game.playerData.health.value > 0) {
-      game.playerData.health.value -= 1;
-      game.gameState = GameState.removeHealth;
-    } else {
-      game.playerData.health.value = 0;
-    }
-  }
-
-  Future<void> onHealthChange() async {
+  // event on health change
+  Future<void> _onHealthChange() async {
+    // check if health is 0
     if (game.playerData.health.value == 0) {
-      onGameOver();
+      _onGameOver();
     }
   }
 
-  Future<void> onChangeLevel() async {
-    levelCompletedMessageRoute();
+  // event when player reach checkPoint
+  void _onCheckPoint() {
+    // stop timer
+    game.gameTimer.interval.stop();
+    game.sound.stop();
+
+    // play victory sound
+    game.sound.playBgm('victorious');
+
+    // go to next level
+    game.gamePlay._changeLevel();
+  }
+
+  Future<void> _changeLevel() async {
+    _levelCompletedMessageRoute();
 
     const waitToChangeDuration =
         Duration(seconds: GameVars.changeLevelDuration);
     await Future.delayed(waitToChangeDuration, () => loadNextLevel());
   }
 
-  void onCheckPoint() {
-    game.gameTimer.interval.stop();
-    game.sound.stop();
-    game.sound.playBgm('victorious');
-  }
-
-  void levelCompletedMessageRoute() {
+  void _levelCompletedMessageRoute() {
     game.overlayDuration = GameVars.changeLevelDuration;
     game.overlayMessage = "LEVEL COMPLETED";
     game.router.pushRoute(GameTextOverlayScreenRoute());
   }
 
-  void startLevelMessageRoute() {
-    game.overlayDuration = GameVars.startLevelOverlayDuration;
-    game.overlayMessage = "LEVEL ${game.playerData.level.value}";
-    game.router.pushRoute(GameTextOverlayScreenRoute());
+  void _onRespawn() {
+    _removeHealth();
+    _setCountdownTimeFromTile();
+    _playLevelSong();
   }
 
-  Future<void> onGameOver() async {
+  void _removeHealth() {
+    game.playerData.health.value = game.playerData.health.value > 0
+        ? game.playerData.health.value -= 1
+        : 0;
+  }
+
+  Future<void> _onGameOver() async {
     game.gameTimer.interval.stop();
     game.sound.stop();
 
     game.sound.playBgm('gameOver');
-    game.gamePlay.gameOverRoute();
+    game.router.pushNamed('gameOver');
   }
 
   void soundToggleRoute() {
@@ -218,11 +257,7 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
     game.router.pushReplacementNamed('splash');
   }
 
-  void gameOverRoute() {
-    game.router.pushNamed('gameOver');
-  }
-
-  void winRoute() {
+  void _onWin() {
     game.gameTimer.interval.stop();
     game.sound.stop();
 

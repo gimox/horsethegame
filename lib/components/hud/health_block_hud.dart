@@ -31,8 +31,15 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
   @override
   FutureOr<void> onLoad() {
     _getImages();
+    game.playerData.health.addListener(_onHealthChange);
 
     return super.onLoad();
+  }
+
+  void _onHealthChange() async {
+    healthTextComponent.text = 'x${game.playerData.health.value}';
+
+    await updateSpriteHealth();
   }
 
   void _getImages() {
@@ -104,11 +111,10 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
   }
 
   void _blinkSpriteHealth() {
-
     if (kDebugMode) {
       print('-> add blink effect to sprite health');
     }
-    if(spriteHealthList.isNotEmpty) {
+    if (spriteHealthList.isNotEmpty) {
       SpriteComponent newSprite = spriteHealthList.last;
 
       newSprite.add(
@@ -121,7 +127,5 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
       spriteHealthList.last.removeFromParent();
       add(newSprite);
     }
-
-
   }
 }

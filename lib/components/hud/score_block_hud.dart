@@ -3,6 +3,7 @@
  * Giorgio Modoni <modogio@gmail.com>
  */
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -21,10 +22,19 @@ class ScoreBlockHud extends PositionComponent with HasGameRef<MyGame> {
     super.priority,
   });
 
-
   late final Image spriteImage;
-
   late final TextComponent scoreTextComponent;
+
+  @override
+  FutureOr<void> onLoad() {
+    game.playerData.score.addListener(_onScoreChange);
+
+    return super.onLoad();
+  }
+
+  void _onScoreChange() {
+    scoreTextComponent.text = '${game.playerData.score.value}';
+  }
 
   void _getImages() {
     spriteImage = game.images.fromCache(
@@ -32,7 +42,6 @@ class ScoreBlockHud extends PositionComponent with HasGameRef<MyGame> {
   }
 
   Future<void> addScoreTextComponent() async {
-
     scoreTextComponent = TextComponent(
       text: '${game.playerData.score.value}',
       anchor: Anchor.topRight,
@@ -43,19 +52,16 @@ class ScoreBlockHud extends PositionComponent with HasGameRef<MyGame> {
     await _getSprite();
   }
 
-
-  Future<void>  _getSprite() async {
+  Future<void> _getSprite() async {
     _getImages();
-    final spriteFruit =  SpriteComponent(
+    final spriteFruit = SpriteComponent(
       sprite: Sprite(
         spriteImage,
         srcSize: Vector2(32, 32),
       ),
       size: Vector2(spriteSize, spriteSize),
       anchor: Anchor.topCenter,
-      position: Vector2(
-          game.size.x - 10,
-          scoreTextComponent.position.y - 2),
+      position: Vector2(game.size.x - 10, scoreTextComponent.position.y - 2),
     );
 
     await add(spriteFruit);

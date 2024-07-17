@@ -24,6 +24,15 @@ class LevelBlockHud extends PositionComponent with HasGameRef<MyGame> {
   late final TextComponent levelTextComponent;
   late SpriteComponent levelImage;
 
+  @override
+  Future<void> onLoad() async {
+    game.playerData.level.addListener(_onLevelChange);
+  }
+
+  void _onLevelChange() {
+    replaceLevelImage();
+  }
+
   Future<void> addLevelText() async {
     levelTextComponent = TextComponent(
       text: 'Level:',

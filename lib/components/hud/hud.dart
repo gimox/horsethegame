@@ -4,7 +4,6 @@
  */
 
 import 'package:flame/components.dart';
-import 'package:horsethegame/app/game_theme.dart';
 import 'package:horsethegame/components/hud/buttons_block_hud.dart';
 import 'package:horsethegame/components/hud/level_block_hud.dart';
 import 'package:horsethegame/components/hud/health_block_hud.dart';
@@ -24,6 +23,7 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
   late final TimerBlockHud timerBlockHud;
 
   Hud({super.children, super.priority});
+
 
   @override
   Future<void> onLoad() async {
@@ -67,25 +67,5 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     await buttonsBlockHud.addPauseImage();
     await buttonsBlockHud.addSoundImage();
     await timerBlockHud.addTimer();
-
-    game.playerData.health.addListener(onHealthChange);
-    game.playerData.level.addListener(onLevelChange);
-    game.playerData.score.addListener(onScoreChange);
   }
-
-  void onScoreChange() {
-    scoreBlockHud.scoreTextComponent.text = '${game.playerData.score.value}';
-  }
-
-  void onHealthChange() async {
-    healthBlockHud.healthTextComponent.text =
-        'x${game.playerData.health.value}';
-
-    await healthBlockHud.updateSpriteHealth();
-  }
-
-  void onLevelChange() {
-    levelBlockHud.replaceLevelImage();
-  }
-
 }

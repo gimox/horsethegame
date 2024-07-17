@@ -7,7 +7,6 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:horsethegame/components/audio_manager.dart';
 import 'package:horsethegame/components/checkpoint.dart';
 import 'package:horsethegame/components/collision_block.dart';
@@ -48,8 +47,6 @@ class Player extends SpriteAnimationGroupComponent
   final double _terminalVelocity = GameVars.terminalVelocity;
   final double moveSpeed = GameVars.moveSpeed;
   final double playerSpriteSize = GameVars.playerSpriteSize;
-
-
 
   double horizontalMovement = 0;
   Vector2 startingPosition = Vector2.zero();
@@ -106,7 +103,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   moveLeft() {
-  //  horizontalMovement += -1;
+    //  horizontalMovement += -1;
     horizontalMovement = -1;
   }
 
@@ -269,8 +266,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void respawn() async {
-    // remove health
-    game.gamePlay.removeHealth();
+    game.gameState.value = GameState.respawn;
 
     game.sound.playSfx(GameSoundSfx.hit);
 
@@ -297,7 +293,6 @@ class Player extends SpriteAnimationGroupComponent
 
   void _reachedCheckpoint() async {
     reachedCheckpoint = true;
-    game.gamePlay.onCheckPoint();
 
     game.sound.playSfx(GameSoundSfx.disappear);
 
@@ -315,6 +310,6 @@ class Player extends SpriteAnimationGroupComponent
     reachedCheckpoint = false;
     position = Vector2.all(GameVars.resolution['width']! * -1);
 
-    game.gamePlay.onChangeLevel();
+    game.gameState.value = GameState.reachedCheckpoint;
   }
 }

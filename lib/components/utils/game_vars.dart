@@ -6,7 +6,6 @@
 import 'dart:ui';
 
 class GameVars {
-
   //debug
   static const bool playerDebug = false;
   static const bool sawDebug = false;
@@ -24,17 +23,14 @@ class GameVars {
   static const double moveSpeed = 100;
   static const double playerSpriteSize = 32;
 
-
   static const int playerStartHealth = 3;
   static const int playerStartScore = 0;
   static const int playerStartLevel = 0;
 
-
   // hud
   static const double hudPositionY = 5;
   static const double hudPlayerHealthSize = 20;
-  static const String hudFruitsItem= 'Cherries.png';
-
+  static const String hudFruitsItem = 'Cherries.png';
 
   //items
   static const String itemsDir = 'Items';
@@ -49,8 +45,8 @@ class GameVars {
   static const int soundOverlayDuration = 1;
   static const int startLevelOverlayDuration = 1;
 
-
-  static const int hurryUpStartTime = 10;
+  // static const int hurryUpStartTime = 10;
+  static const int hurryUpStartTime = 290; // for debug
 
   //resolution
   static const Map<String, double> resolution = {'width': 640, 'height': 360};

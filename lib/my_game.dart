@@ -25,10 +25,13 @@ import 'components/player.dart';
 
 enum GameState {
   idle,
-  loading,
-  startingGame,
-  start,
-  removeHealth,
+  startGame,
+  hurryUpTime,
+  resetTime,
+  reachedCheckpoint,
+  respawn,
+  gameOver,
+  win
 }
 
 class MyGame extends FlameGame
@@ -77,11 +80,9 @@ class MyGame extends FlameGame
   String overlayMessage = '';
   int overlayDuration = 3;
 
-
   late final GameTimer gameTimer;
 
-  late GameState gameState;
-  late ValueNotifier<GameState> gameStateNotifier;
+  late ValueNotifier<GameState> gameState;
 
   @override
   FutureOr<void> onLoad() async {
@@ -90,13 +91,11 @@ class MyGame extends FlameGame
     }
 
     // game event
-    gameState = GameState.idle;
-    gameStateNotifier = ValueNotifier<GameState>(gameState);
+    gameState = ValueNotifier<GameState>(GameState.idle);
 
     gameTimer = GameTimer();
     add(gameTimer);
     gameTimer.loadTimer();
-
 
     // load all image into cache
     await images.loadAllImages();
