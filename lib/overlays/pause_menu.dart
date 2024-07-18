@@ -40,12 +40,9 @@ class PauseMenu extends StatelessWidget {
               width: 120,
               child: ElevatedButton(
                 onPressed: () async {
-                  game.gamePlay.splashRoute();
-
-                  //game.router.pop();
+                  game.router.pop();
                   game.resumeEngine();
-
-
+                  game.gamePlay.splashRoute();
                 },
                 child: const Text('Exit'),
               ),

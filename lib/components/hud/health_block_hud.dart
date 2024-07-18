@@ -88,20 +88,20 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
     if (spriteHealthList.length > game.playerData.health.value) {
       // remove
       if (kDebugMode) {
-        print('-> remove');
+        print('* Health_block_hud remove health');
       }
       spriteHealthList.last.removeFromParent();
       spriteHealthList.removeLast();
 
       if (kDebugMode) {
-        print('-> health value ${spriteHealthList.length}');
+        print('* Health_block_hud health value ${spriteHealthList.length}');
       }
       if (spriteHealthList.length == 1) _blinkSpriteHealth();
     } else {
       // add
       // this can be to excessive...but it's called once at restart.
       if (kDebugMode) {
-        print('-> add');
+        print('* Health_block_hud add health');
       }
       removeAll(spriteHealthList);
       spriteHealthList.clear();
@@ -112,7 +112,7 @@ class HealthBlockHud extends PositionComponent with HasGameRef<MyGame> {
 
   void _blinkSpriteHealth() {
     if (kDebugMode) {
-      print('-> add blink effect to sprite health');
+      print('* Health_block_hud add blink effect to sprite health');
     }
     if (spriteHealthList.isNotEmpty) {
       SpriteComponent newSprite = spriteHealthList.last;

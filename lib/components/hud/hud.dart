@@ -68,4 +68,5 @@ class Hud extends PositionComponent with HasGameRef<MyGame> {
     await buttonsBlockHud.addSoundImage();
     await timerBlockHud.addTimer();
   }
+  
 }

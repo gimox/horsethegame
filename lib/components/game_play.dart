@@ -78,13 +78,12 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
 
     if (game.currentLevelIndex < game.levelNames.length - 1) {
       game.currentLevelIndex++;
+      await _loadLevel();
     } else {
       // no more level = win
       game.gameState.value = GameState.win;
       return;
     }
-
-    await _loadLevel();
   }
 
   FutureOr<void> _loadLevel() async {
@@ -94,13 +93,12 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
 
     if (kDebugMode) {
       print('');
-      print('');
-      print('-------------------------------------------------');
+      print('\n-------------------------------------------------');
       print('current index level: ${game.currentLevelIndex}');
       print('player level: ${game.playerData.level.value}');
       print('player score: ${game.playerData.score.value}');
       print('player health: ${game.playerData.health.value}');
-      print('-------------------------------------------------\n');
+      print('\n-------------------------------------------------');
     }
 
     const Duration startLevelDuration =
@@ -175,7 +173,8 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
   Future<void> _onHealthChange() async {
     // check if health is 0
     if (game.playerData.health.value == 0) {
-      _onGameOver();
+      game.gameState.value = GameState.gameOver;
+      //_onGameOver();
     }
   }
 
@@ -208,22 +207,40 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
 
   void _onRespawn() {
     _removeHealth();
-    _setCountdownTimeFromTile();
-    _playLevelSong();
+    if (game.gameState.value != GameState.gameOver) {
+      _setCountdownTimeFromTile();
+      _playLevelSong();
+    }
   }
 
   void _removeHealth() {
+    if(game.playerData.health.value > 0)game.playerData.health.value -= 1;
+
+    /*
     game.playerData.health.value = game.playerData.health.value > 0
         ? game.playerData.health.value -= 1
         : 0;
+
+     */
   }
 
   Future<void> _onGameOver() async {
+    if (kDebugMode) {
+      print('* gamePlay onGameOver');
+    }
     game.gameTimer.interval.stop();
     game.sound.stop();
 
     game.sound.playBgm('gameOver');
     game.router.pushNamed('gameOver');
+  }
+
+  void _onWin() {
+    game.gameTimer.interval.stop();
+    game.sound.stop();
+
+    game.sound.playBgm('win');
+    game.router.pushNamed('win');
   }
 
   void soundToggleRoute() {
@@ -253,15 +270,8 @@ class GamePlay extends Component with HasGameRef<MyGame>, Notifier {
   void splashRoute() {
     game.gameTimer.interval.stop();
     game.sound.stop();
+
     game.sound.playBgm('menu');
-    game.router.pushReplacementNamed('splash');
-  }
-
-  void _onWin() {
-    game.gameTimer.interval.stop();
-    game.sound.stop();
-
-    game.sound.playBgm('win');
-    game.router.pushReplacementNamed('win');
+    game.router.pushNamed('splash');
   }
 }

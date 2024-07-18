@@ -4,7 +4,7 @@
  */
 
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
 import 'package:google_fonts/google_fonts.dart';
 
 final regular = TextPaint(

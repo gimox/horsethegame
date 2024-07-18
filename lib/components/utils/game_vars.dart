@@ -52,7 +52,7 @@ class GameVars {
   static const Map<String, double> resolution = {'width': 640, 'height': 360};
 
   // sound
-  static const bool playSound = false;
+  static const bool playSound = true;
   static const double soundMusicVolumes = 0.7;
   static const double soundSfxVolumes = 0.9;
 

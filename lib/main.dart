@@ -2,17 +2,13 @@
  * Copyright (c) 2024.
  * Giorgio Modoni <modogio@gmail.com>
  */
-/*
- * Copyright (c) 2024.
- * Giorgio Modoni <modogio@gmail.com>
- */
 
 import 'dart:io';
 
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:horsethegame/my_game.dart';

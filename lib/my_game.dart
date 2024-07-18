@@ -138,6 +138,10 @@ class MyGame extends FlameGame
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     player.resetMovement();
 
+    if (gameState.value == GameState.gameOver) {
+      return KeyEventResult.handled;
+    }
+
     if (keysPressed.contains(LogicalKeyboardKey.space) ||
         keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
       player.hasJumped = true;

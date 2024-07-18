@@ -44,7 +44,9 @@ class AudioManager extends Component with HasGameRef<MyGame> {
   }
 
   void playBgm(String fileName) {
+
     if (game.playSounds) {
+      stop();
       isPlayBsm = true;
       FlameAudio.bgm.play(
         '$fileName.mp3',
