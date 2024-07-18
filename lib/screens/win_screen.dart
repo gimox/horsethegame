@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2024.
  * Giorgio Modoni <modogio@gmail.com>
@@ -8,11 +7,8 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:horsethegame/app/game_theme.dart';
 import 'package:horsethegame/components/utils/bsckground_util.dart';
 import 'package:horsethegame/my_game.dart';
-import 'package:flutter/rendering.dart';
-
 
 class WinScreenWorld extends World with HasGameRef<MyGame> {
   final double yStartPos = 20;
@@ -33,7 +29,8 @@ class WinScreenWorld extends World with HasGameRef<MyGame> {
     final s = SpriteComponent(
       sprite: Sprite(img),
       anchor: Anchor.topLeft,
-      position: Vector2((game.size.x / 2) - (400 / 2), game.size.y / 2 - 130 / 2),
+      position:
+          Vector2((game.size.x / 2) - (400 / 2), game.size.y / 2 - 130 / 2),
       size: Vector2(400, 130),
     );
 
@@ -41,13 +38,9 @@ class WinScreenWorld extends World with HasGameRef<MyGame> {
   }
 }
 
-
-
-
 class WinScreen extends Component with TapCallbacks, HasGameRef<MyGame> {
   @override
   Future<void> onLoad() async {
-
     World world = WinScreenWorld();
 
     final CameraComponent cam = CameraComponent.withFixedResolution(
